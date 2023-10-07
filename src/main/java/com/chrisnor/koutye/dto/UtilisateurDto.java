@@ -1,6 +1,8 @@
 package com.chrisnor.koutye.dto;
 
 import java.sql.Blob;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
@@ -11,12 +13,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,11 +53,29 @@ public class UtilisateurDto {
 	  @Column(nullable=false)
 	  private String phone;
 	  
-	  @Column(nullable=false)
+	  @Lob
+	  @Basic(fetch = FetchType.LAZY)
+	  @Column(nullable=true)
 	  private String photo;
 	  
 	  @Column(nullable=false)
 	  private String nomType;
+	  
+	  @Temporal(TemporalType.TIMESTAMP)
+	  @Column(name="creation_date",nullable=true)
+	  private LocalDateTime creationDate;
+	  
+	  @Temporal(TemporalType.TIMESTAMP)
+	  @Column(name="modification_date",nullable=true)
+	  private LocalDateTime modificationDate;
+	  
+	  @Temporal(TemporalType.TIMESTAMP)
+	  @Column(name="login_date",nullable=true)
+	  private LocalDateTime loginDate;
+	  
+	  @Temporal(TemporalType.TIMESTAMP)
+	  @Column(name="logout_date",nullable=true)
+	  private LocalDateTime logoutDate;
 	  
 //	  @ManyToOne(cascade=CascadeType.ALL)
 //	  @JoinColumn(name="id_type")

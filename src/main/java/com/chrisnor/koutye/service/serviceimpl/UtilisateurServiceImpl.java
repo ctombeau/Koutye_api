@@ -1,12 +1,19 @@
 package com.chrisnor.koutye.service.serviceimpl;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.chrisnor.koutye.dto.UtilisateurDto;
@@ -15,6 +22,7 @@ import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.repository.TypeUtilisateurRepository;
 import com.chrisnor.koutye.repository.UtilisateurRepository;
 import com.chrisnor.koutye.service.UtilisateurService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -22,6 +30,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService{
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private UtilisateurRepository utilisateurRepo;
@@ -37,22 +47,46 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public void PutUtilisateur(Utilisateur utilisateur) {
-		// TODO Auto-generated method stub
+		utilisateurRepo.save(utilisateur);
 		
 	}
 
 	@Override
-	public Optional<Utilisateur> getUtilisateur(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<UtilisateurDto> getUtilisateur(String username) {
+        System.out.println(username);
+		Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username);
+		//UtilisateurDto utilDto = modelMapper.map(util, UtilisateurDto.class);
+		if(util != null)
+		{
+			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
+		}
+		else
+		{
+			return null;
+		}
+		
 	}
 
 	@Override
+	@Transactional
 	public UtilisateurDto Login(String username, String password) {
 		Utilisateur utilisateur = new Utilisateur();
-		utilisateur = utilisateurRepo.findUtilisateurByUsernameAndPassword(username, password);
+		utilisateur = utilisateurRepo.findUtilisateurByUsername(username);
 		
-		return modelMapper.map(utilisateur, UtilisateurDto.class);
+		if(utilisateur != null && passwordEncoder.matches(password, utilisateur.getPassword()))
+		{
+			Query req = em.createNativeQuery("update utilisateur set login_date=? where utilisateur_id=?");
+			req.setParameter(1, LocalDateTime.now());
+			req.setParameter(2, utilisateur.getUtilisateurId());
+			req.executeUpdate();
+			//utilisateur.setLoginDate(LocalDateTime.now());
+			return modelMapper.map(utilisateur, UtilisateurDto.class);
+		}
+		else
+		{
+			return null;
+		}
+		
 	}
 
 	@Override
@@ -66,25 +100,27 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	@Transactional
-	public UtilisateurDto PostUtilisateur(UtilisateurDto utilDto) {
+	public UtilisateurDto PostUtilisateur( UtilisateurDto utilDto) {
 		Utilisateur util = new Utilisateur();
 		TypeUtilisateur typeUtil = new TypeUtilisateur();
 	    
 		if(utilisateurRepo.findUtilisateurByUsername(utilDto.getUsername())==null && 
 				utilisateurRepo.findUtilisateurByEmail(utilDto.getEmail())==null)
 		{
+
 			typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
 			String nom= utilDto.getNom();
 			String prenom = utilDto.getPrenom();
 			String email = utilDto.getEmail();
 			String username = utilDto.getUsername();
-			String password = utilDto.getPassword();
+			String password = passwordEncoder.encode(utilDto.getPassword());
 			String phone = utilDto.getPhone();
-			String photo = utilDto.getPhoto();
+			String photo = utilDto.getPhoto(); //picture;
+			LocalDateTime creation_date = LocalDateTime.now();
 			Long idType = typeUtil.getIdType();
 			
-			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type)"
-					+ "values(?,?,?,?,?,?,?,?)",UtilisateurDto.class);
+			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type,creation_date)"
+					+ "values(?,?,?,?,?,?,?,?,?)",UtilisateurDto.class);
 			q.setParameter(1, nom);
 			q.setParameter(2, prenom);
 			q.setParameter(3, email);
@@ -93,6 +129,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			q.setParameter(6, phone);
 			q.setParameter(7, photo);
 			q.setParameter(8, idType);
+			q.setParameter(9, creation_date);
 			
 			q.executeUpdate();
 			return utilDto;

@@ -10,7 +10,7 @@ public interface UtilisateurService {
 	public UtilisateurDto PostUtilisateur(UtilisateurDto utilisateurDto);
 	public void PutUtilisateur(Utilisateur utilisateur);
 	public List<UtilisateurDto> getAllUtilisateurs();
-	public Optional<Utilisateur> getUtilisateur(String username);
+	public Optional<UtilisateurDto> getUtilisateur(String username);
 	public UtilisateurDto Login(String username, String password);
 	public long FindIdTypeByNomType(String nomType);
 }

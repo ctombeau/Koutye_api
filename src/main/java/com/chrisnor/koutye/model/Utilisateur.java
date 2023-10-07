@@ -3,11 +3,14 @@ package com.chrisnor.koutye.model;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +19,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,8 +65,26 @@ public class Utilisateur implements Serializable{
   @Column(nullable=false)
   private String phone;
   
-  @Column(nullable=false)
+  @Column(nullable=true, length=64)
+  //@Lob
+  @Basic(fetch = FetchType.LAZY)
   private String photo;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name="creation_date",nullable=true)
+  private LocalDateTime creationDate;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name="modification_date",nullable=true)
+  private LocalDateTime modificationDate;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name="login_date",nullable=true)
+  private LocalDateTime loginDate;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name="logout_date",nullable=true)
+  private LocalDateTime logoutDate;
   
   @ManyToOne(cascade=CascadeType.ALL)
   @JoinColumn(name="id_type")
@@ -68,4 +92,6 @@ public class Utilisateur implements Serializable{
   
   @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY)
   private List<Appartement> appartements;
+  
+  
 }
