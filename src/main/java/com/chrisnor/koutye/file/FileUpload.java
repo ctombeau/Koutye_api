@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,17 +57,22 @@ public class FileUpload {
 	
 	public String UploadFiles(MultipartFile multipartFile, String directory)
 			throws IOException {
-         Path filePath;
+         Path filePath=null;
          
         try (InputStream inputStream = multipartFile.getInputStream()) {
-        	 System.out.println("Le chemin test: "+directory);
-        	 filePath = Paths.get(directory,multipartFile.getOriginalFilename()).toAbsolutePath().normalize();
-             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        	if(!multipartFile.getOriginalFilename().equals(""))
+        	{
+              filePath= Path.of(directory+"-"+multipartFile.getOriginalFilename()).toAbsolutePath().normalize();
+              Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+              return filePath.toString();
+        	}
+        	else
+        		return null;
         } catch (IOException ioe) {       
             throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
         }
          
-        return filePath.toString();
+        
 	}
 	
 	public static InputStream DownloadFiles(String path) throws IOException

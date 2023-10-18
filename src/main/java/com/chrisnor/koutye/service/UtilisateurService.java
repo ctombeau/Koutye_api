@@ -8,7 +8,7 @@ import com.chrisnor.koutye.model.Utilisateur;
 
 public interface UtilisateurService {
 	public UtilisateurDto PostUtilisateur(UtilisateurDto utilisateurDto);
-	public void PutUtilisateur(Utilisateur utilisateur);
+	public UtilisateurDto PutUtilisateur(Long id,UtilisateurDto utilDto);
 	public List<UtilisateurDto> getAllUtilisateurs();
 	public Optional<UtilisateurDto> getUtilisateur(String username);
 	public UtilisateurDto Login(String username, String password);

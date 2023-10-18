@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +32,7 @@ import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.service.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -45,11 +48,14 @@ public class UtilisateurController {
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo,@RequestParam String model)
 			throws Exception
 	{       
-		    
+		    String retour;
 		    ObjectMapper mapper = new ObjectMapper();
 		    UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
-		    String retour = new  FileUpload().UploadFiles(photo,userFolder+utilisateurDto.getUsername()+"/");
-		    utilisateurDto.setPhoto(retour.replace("\\", "/"));
+		    
+		    retour = new  FileUpload().UploadFiles(photo,userFolder+utilisateurDto.getUsername());
+		    if (retour != null)
+		        utilisateurDto.setPhoto(retour.replace("\\", "/"));
+		    
 			UtilisateurDto util = utilService.PostUtilisateur(utilisateurDto);
 			if(util != null)
 			{
@@ -108,15 +114,47 @@ public class UtilisateurController {
 		}
 	}
 	
-	@PostMapping("/user/update")
-	public ResponseEntity<Response> UpdateUser(@RequestBody Utilisateur util)
+	@PutMapping("/user/update/{id}")
+	public ResponseEntity<Response> UpdateUser(@PathVariable Long id,@RequestParam MultipartFile photo,@RequestParam String model)
 	{
-		return null;
+		String retour;
+		UtilisateurDto util = new UtilisateurDto();
+	    ObjectMapper mapper = new ObjectMapper();
+	    try {
+	          UtilisateurDto utilDto =  mapper.readValue(model, UtilisateurDto.class);
+	          retour = new  FileUpload().UploadFiles(photo,userFolder+utilDto.getUsername());
+	  	    if (retour != null)
+	  	        utilDto.setPhoto(retour.replace("\\", "/"));
+	  	    
+	  		util = utilService.PutUtilisateur(id,utilDto);
+	    }
+	    catch(Exception e)
+	    {
+	    	System.out.println(e.getMessage());
+	    }
+	    
+		if(util != null)
+		{
+			Response res = new Response();
+			res.setObject(util);
+			res.setMessage("Utilisateur modifié avec succès");
+			return new ResponseEntity<>(res,HttpStatus.CREATED);
+		}
+		else 
+		{
+			Response res = new Response();
+			res.setMessage("Erreur lors de la mofification de l'utilisateur");
+			return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
+		}
 	}
 	
-	@GetMapping("/download")
-	public InputStream TestDownload(@RequestParam String path) throws IOException
-	{
-		return FileUpload.DownloadFiles(path);
+	@GetMapping("/users")
+	public ResponseEntity<Response> ListUtilisateurs()
+	{	
+		List<UtilisateurDto> utilisateurs = utilService.getAllUtilisateurs();
+		Response res = new Response();
+		res.setMessage("Liste des utilisateurs");
+		res.setObject(utilisateurs);
+		return new ResponseEntity<>(res,HttpStatus.OK);
 	}
 }

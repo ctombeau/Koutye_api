@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,16 +47,42 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	private EntityManager em;
 
 	@Override
-	public void PutUtilisateur(Utilisateur utilisateur) {
-		utilisateurRepo.save(utilisateur);
+	@Transactional
+	public UtilisateurDto PutUtilisateur(Long id, UtilisateurDto utilDto) {
+		Utilisateur util = utilisateurRepo.findById(id).get();
+		TypeUtilisateur typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
+		
+		if(util != null)
+		{
+			Query q = em.createNativeQuery("update utilisateur set nom=:userNom,prenom=:userPrenom,email=:userEmail,"
+					+ "username=:userName,password=:userPassword,phone=:userPhone,photo=:userPhoto,id_type=:userType,"
+					+ "modification_date=:userDate where utilisateur_id=:userId",UtilisateurDto.class);
+			q.setParameter("userNom", utilDto.getNom());
+			q.setParameter("userPrenom", utilDto.getPrenom());
+			q.setParameter("userEmail", utilDto.getEmail());
+			q.setParameter("userName", utilDto.getUsername());
+			q.setParameter("userPassword", passwordEncoder.encode(utilDto.getPassword()));
+			q.setParameter("userPhone", utilDto.getPhone());
+			q.setParameter("userPhoto", utilDto.getPhoto());
+			q.setParameter("userType", typeUtil.getIdType());
+			q.setParameter("userDate", LocalDateTime.now());
+			q.setParameter("userId", id);
+			q.executeUpdate();
+			
+			return utilDto;
+		}
+		else
+		{
+			return null;
+		}
 		
 	}
 
 	@Override
 	public Optional<UtilisateurDto> getUtilisateur(String username) {
-        System.out.println(username);
+        
 		Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username);
-		//UtilisateurDto utilDto = modelMapper.map(util, UtilisateurDto.class);
+		
 		if(util != null)
 		{
 			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
