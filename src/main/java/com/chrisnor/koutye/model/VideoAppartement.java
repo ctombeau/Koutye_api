@@ -34,10 +34,10 @@ public class VideoAppartement implements Serializable {
 	@Column(name="id_video")
 	private Long idVideo;
 	
-	@Lob
+	//@Lob
     @Basic(fetch = FetchType.LAZY)
 	@NotNull
-	private byte[] video;
+	private String video;
 	
 	@NotNull
 	@Column(name="description_video")

@@ -34,10 +34,10 @@ public class ImageAppartement implements Serializable{
 	@Column(name="id_image")
 	private Long igImage;
 	
-	@Lob
+	//@Lob
     @Basic(fetch = FetchType.LAZY)
 	@NotNull
-	private byte[] image; 
+	private String image; 
 	
 	@NotNull
 	@Column(name="description_image")

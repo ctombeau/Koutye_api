@@ -4,20 +4,34 @@ package com.chrisnor.koutye.service.serviceimpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.chrisnor.koutye.dto.UtilisateurDto;
+import com.chrisnor.koutye.exception.InvalidInputException;
 import com.chrisnor.koutye.model.TypeUtilisateur;
 import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.repository.TypeUtilisateurRepository;
@@ -30,7 +44,7 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 
 @Service
-public class UtilisateurServiceImpl implements UtilisateurService{
+public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsService{
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
@@ -45,6 +59,9 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	
 	@Autowired
 	private EntityManager em;
+	
+	@Autowired
+	private JwtEncoder jwtEncoder;
 
 	@Override
 	@Transactional
@@ -173,6 +190,33 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		
 		Query id = em.createNativeQuery("select id_type from type_utilisateur where nom_type= ?");
 		return 0;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		if(username == null || username.isEmpty())
+			throw new InvalidInputException();
+		//Optional<Utilisateur> optUtil = utilisateurRepo.findUtilisateurByUsername(username);
+		return null;
+	}
+
+	@Override
+	public Map<String, String> GenerateToken(String username, Authentication authentication) {
+		Instant instant = Instant.now();
+		String scope = authentication.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.joining(" "));
+		JwtClaimsSet jwtClaimsSet = JwtClaimsSet
+									.builder()
+									.issuedAt(instant)
+									.expiresAt(instant.plus(10,ChronoUnit.MINUTES))
+									.subject(username)
+									.claim("scope", scope)
+									.build();
+		JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(
+									JwsHeader.with(MacAlgorithm.HS512).build(),
+									jwtClaimsSet
+								);
+		String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+		return Map.of("access-token",jwt);
 	}
 
 }

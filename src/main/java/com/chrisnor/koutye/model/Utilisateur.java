@@ -90,7 +90,7 @@ public class Utilisateur implements Serializable{
   @JoinColumn(name="id_type")
   private TypeUtilisateur typeUtilisateur;
   
-  @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY)
+  @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY, cascade = CascadeType.PERSIST)
   private List<Appartement> appartements;
   
   

@@ -42,16 +42,16 @@ public class Appartement implements Serializable {
 	@JoinColumn(name="utilisateur_id")
 	private Utilisateur utilisateur;
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="adresse_id")
 	private Adresse adresse;
 	
 	@OneToOne(mappedBy="appartement")
 	private Ferme ferme;
 	
-	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY,cascade = CascadeType.PERSIST)
 	private List<ImageAppartement> imageAppartements;
 	
-	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY)
-	private List<VideoAppartement> videoAppartement;
+	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY,cascade = CascadeType.PERSIST)
+	private List<VideoAppartement> videoAppartements;
 }
