@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,22 +43,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Service
-public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsService{
-	@Autowired
+@NoArgsConstructor
+@AllArgsConstructor
+public class UtilisateurServiceImpl implements UtilisateurService{
+
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
 	private UtilisateurRepository utilisateurRepo;
 	
-	@Autowired
 	private TypeUtilisateurRepository typeUtilRepo;
 	
-	@Autowired
 	private ModelMapper modelMapper;
-	
-	@Autowired
+
 	private EntityManager em;
 	
 	@Autowired
@@ -98,7 +99,7 @@ public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsSe
 	@Override
 	public Optional<UtilisateurDto> getUtilisateur(String username) {
         
-		Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username);
+		Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		
 		if(util != null)
 		{
@@ -115,7 +116,7 @@ public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsSe
 	@Transactional
 	public UtilisateurDto Login(String username, String password) {
 		Utilisateur utilisateur = new Utilisateur();
-		utilisateur = utilisateurRepo.findUtilisateurByUsername(username);
+		utilisateur = utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		
 		if(utilisateur != null && passwordEncoder.matches(password, utilisateur.getPassword()))
 		{
@@ -192,14 +193,7 @@ public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsSe
 		return 0;
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		if(username == null || username.isEmpty())
-			throw new InvalidInputException();
-		//Optional<Utilisateur> optUtil = utilisateurRepo.findUtilisateurByUsername(username);
-		return null;
-	}
-
+	
 	@Override
 	public Map<String, String> GenerateToken(String username, Authentication authentication) {
 		Instant instant = Instant.now();
@@ -218,5 +212,7 @@ public class UtilisateurServiceImpl implements UtilisateurService, UserDetailsSe
 		String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
 		return Map.of("access-token",jwt);
 	}
-
+	
+	
+   
 }

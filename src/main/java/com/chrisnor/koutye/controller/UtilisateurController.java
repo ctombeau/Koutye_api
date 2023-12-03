@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.service.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -100,6 +102,7 @@ public class UtilisateurController {
 	@PostMapping("/login")
 	public Map<String, String> Login(@RequestBody LoginDto loginDto)
 	{
+  
 		Authentication authentication = authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
