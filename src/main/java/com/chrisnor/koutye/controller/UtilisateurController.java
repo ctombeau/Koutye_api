@@ -35,6 +35,7 @@ import com.chrisnor.koutye.dto.UtilisateurDto;
 import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.response.Response;
+import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -49,13 +50,16 @@ public class UtilisateurController {
 	private String userFolder;
 
 	@Autowired
-	private UtilisateurService utilService;
+	private UtilisateurService utilService; 
+	
+	@Autowired
+	private ResponseGenerator responseGenerator;
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@PostMapping("/user/add")
-	@PreAuthorize("hasAuthority('SCOPE_USER')")
+	//@PreAuthorize("hasAuthority('SCOPE_USER')")
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo, @RequestParam String model)
 			throws Exception {
 		String retour;
@@ -68,14 +72,11 @@ public class UtilisateurController {
 
 		UtilisateurDto util = utilService.PostUtilisateur(utilisateurDto);
 		if (util != null) {
-			Response res = new Response();
-			res.setObject(util);
-			res.setMessage("Utilisateur créé avec succès");
-			return new ResponseEntity<>(res, HttpStatus.CREATED);
+			
+			return responseGenerator.SuccessResponse(HttpStatus.CREATED, util);
 		} else {
-			Response res = new Response();
-			res.setMessage("Erreur lors de l'insertion de l'utilisateur");
-			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+			return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de l'insertion de l'utilisateur");
+			
 		}
 	}
 
@@ -106,8 +107,12 @@ public class UtilisateurController {
 		Authentication authentication = authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
-		
-		return utilService.GenerateToken(loginDto.getUsername(),authentication);
+		System.out.println(authentication.getName());
+		System.out.println(authentication.getAuthorities());
+		if(authentication.isAuthenticated())
+		   return utilService.GenerateToken(loginDto.getUsername(),authentication);
+		else
+			return Map.of("message", "username ou password incorrect");
 	}
 
 	@GetMapping("/user")

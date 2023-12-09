@@ -1,5 +1,9 @@
 package com.chrisnor.koutye.service.serviceimpl;
 
+import java.util.Arrays;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,12 +30,13 @@ public class UserDetailServiceImpl implements UserDetailsService{
 		if(username == null || username.isEmpty())
 			throw new InvalidInputException();
 	    Utilisateur utilisateur= utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
-		
-	    //utilisateur.getRoles().stream().map(u->u.getTypeUtilisateur()).coll
+		//String authorithy = new SimpleGrantedAuthority(utilisateur.getTypeUtilisateur()).toString();
+	    //utilisateur.getRoles().stream().map(u->u.getTypeUtilisateur());
+	    //utilisateur.getTypeUtilisateur();
 	    UserDetails userDetails = User
 	    						.withUsername(utilisateur.getUsername())
 	    						.password(utilisateur.getPassword())
-	    						//.authorities(utilisateur.getTypeUtilisateur())
+	    						.authorities(utilisateur.getTypeUtilisateur().getNomType())
 	    						.build();
 	    return userDetails;
 	}

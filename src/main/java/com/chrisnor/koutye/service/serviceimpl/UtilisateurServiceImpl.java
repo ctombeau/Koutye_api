@@ -53,6 +53,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
 	private UtilisateurRepository utilisateurRepo;
 	
 	private TypeUtilisateurRepository typeUtilRepo;
@@ -148,7 +149,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	public UtilisateurDto PostUtilisateur( UtilisateurDto utilDto) {
 		Utilisateur util = new Utilisateur();
 		TypeUtilisateur typeUtil = new TypeUtilisateur();
-	    
+
 		if(utilisateurRepo.findUtilisateurByUsername(utilDto.getUsername())==null && 
 				utilisateurRepo.findUtilisateurByEmail(utilDto.getEmail())==null)
 		{
