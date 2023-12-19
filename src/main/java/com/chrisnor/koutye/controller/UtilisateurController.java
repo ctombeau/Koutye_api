@@ -11,13 +11,16 @@ import org.apache.commons.io.IOExceptionList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,14 +29,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chrisnor.koutye.dto.LoginDto;
 import com.chrisnor.koutye.dto.UtilisateurDto;
+import com.chrisnor.koutye.dto.UtilisateurFileDto;
 import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Utilisateur;
+import com.chrisnor.koutye.repository.UtilisateurRepository;
 import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.UtilisateurService;
@@ -57,48 +63,34 @@ public class UtilisateurController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private UtilisateurRepository utilisateurRepo;
+	
 
-	@PostMapping("/user/add")
-	//@PreAuthorize("hasAuthority('SCOPE_USER')")
+	@PostMapping(value="/user/add")
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo, @RequestParam String model)
 			throws Exception {
+		  
 		String retour;
 		ObjectMapper mapper = new ObjectMapper();
 		UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
+		
+		if(utilisateurRepo.findUtilisateurByUsername(utilisateurDto.getUsername()).isEmpty())
+		{
+			retour = new FileUpload().UploadFiles(photo, userFolder + utilisateurDto.getUsername());
+			if (retour != null)
+				utilisateurDto.setPhoto(retour.replace("\\", "/"));
 
-		retour = new FileUpload().UploadFiles(photo, userFolder + utilisateurDto.getUsername());
-		if (retour != null)
-			utilisateurDto.setPhoto(retour.replace("\\", "/"));
-
-		UtilisateurDto util = utilService.PostUtilisateur(utilisateurDto);
-		if (util != null) {
-			
+			UtilisateurDto util = utilService.PostUtilisateur(utilisateurDto);
 			return responseGenerator.SuccessResponse(HttpStatus.CREATED, util);
-		} else {
-			return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de l'insertion de l'utilisateur");
-			
 		}
-	}
-
-	/*
-	@PostMapping("/login")
-	public ResponseEntity<Response> Login(@RequestBody LoginDto loginDto) {
-		UtilisateurDto utilDto = new UtilisateurDto();
-		utilDto = utilService.Login(loginDto.getUsername(), loginDto.getPassword());
-
-		if (utilDto != null) {
-			Response res = new Response();
-			res.setObject(utilDto);
-			res.setMessage("Utilisateur loggé avec succès");
-			return new ResponseEntity<>(res, HttpStatus.CREATED);
-		} else {
-			Response res = new Response();
-			res.setMessage("Le nom d'utilisateur et/ou le mot de passe est incorrect.");
-			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+		else
+		{
+			return responseGenerator.ErrorResponse(HttpStatus.CONFLICT, "Utilisateur existe deja");
 		}
+		
 	}
-	
-	*/
 	
 	@PostMapping("/login")
 	public Map<String, String> Login(@RequestBody LoginDto loginDto)
@@ -107,12 +99,13 @@ public class UtilisateurController {
 		Authentication authentication = authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
-		System.out.println(authentication.getName());
-		System.out.println(authentication.getAuthorities());
+		
 		if(authentication.isAuthenticated())
-		   return utilService.GenerateToken(loginDto.getUsername(),authentication);
-		else
-			return Map.of("message", "username ou password incorrect");
+		{
+			utilService.Login(loginDto.getUsername(), loginDto.getPassword());
+			return utilService.GenerateToken(loginDto.getUsername(),authentication);
+		}
+		return Map.of("message", "username ou password incorrect");
 	}
 
 	@GetMapping("/user")
@@ -162,11 +155,12 @@ public class UtilisateurController {
 	}
 
 	@GetMapping("/users")
+	@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")
 	public ResponseEntity<Response> ListUtilisateurs() {
 		List<UtilisateurDto> utilisateurs = utilService.getAllUtilisateurs();
-		Response res = new Response();
-		res.setMessage("Liste des utilisateurs");
-		res.setObject(utilisateurs);
-		return new ResponseEntity<>(res, HttpStatus.OK);
+		if(utilisateurs.isEmpty())
+		   return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
 	}
 }

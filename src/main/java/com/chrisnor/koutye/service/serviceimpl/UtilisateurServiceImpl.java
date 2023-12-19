@@ -47,26 +47,27 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Service
-@NoArgsConstructor
-@AllArgsConstructor
+@Transactional
 public class UtilisateurServiceImpl implements UtilisateurService{
-
+    @Autowired
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private UtilisateurRepository utilisateurRepo;
 	
+	@Autowired
 	private TypeUtilisateurRepository typeUtilRepo;
 	
+	@Autowired
 	private ModelMapper modelMapper;
 
+	@Autowired
 	private EntityManager em;
 	
 	@Autowired
 	private JwtEncoder jwtEncoder;
 
 	@Override
-	@Transactional
 	public UtilisateurDto PutUtilisateur(Long id, UtilisateurDto utilDto) {
 		Utilisateur util = utilisateurRepo.findById(id).get();
 		TypeUtilisateur typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
@@ -76,7 +77,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			Query q = em.createNativeQuery("update utilisateur set nom=:userNom,prenom=:userPrenom,email=:userEmail,"
 					+ "username=:userName,password=:userPassword,phone=:userPhone,photo=:userPhoto,id_type=:userType,"
 					+ "modification_date=:userDate where utilisateur_id=:userId",UtilisateurDto.class);
-			q.setParameter("userNom", utilDto.getNom());
+			q.setParameter("userNom", utilDto.getNom().toUpperCase());
 			q.setParameter("userPrenom", utilDto.getPrenom());
 			q.setParameter("userEmail", utilDto.getEmail());
 			q.setParameter("userName", utilDto.getUsername());
@@ -115,7 +116,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	@Transactional
-	public UtilisateurDto Login(String username, String password) {
+	public void Login(String username, String password) {
 		Utilisateur utilisateur = new Utilisateur();
 		utilisateur = utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		
@@ -125,12 +126,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			req.setParameter(1, LocalDateTime.now());
 			req.setParameter(2, utilisateur.getUtilisateurId());
 			req.executeUpdate();
-			//utilisateur.setLoginDate(LocalDateTime.now());
-			return modelMapper.map(utilisateur, UtilisateurDto.class);
-		}
-		else
-		{
-			return null;
 		}
 		
 	}
@@ -139,22 +134,20 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	public List<UtilisateurDto> getAllUtilisateurs() {
 		
 		List<Utilisateur> utilisateurs = (List<Utilisateur>) utilisateurRepo.findAll();
+		
 		return  utilisateurs.stream()
-				.map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
-				.collect(Collectors.toList());
+							.map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
+							.collect(Collectors.toList());
+
 	}
 
 	@Override
-	@Transactional
 	public UtilisateurDto PostUtilisateur( UtilisateurDto utilDto) {
 		Utilisateur util = new Utilisateur();
 		TypeUtilisateur typeUtil = new TypeUtilisateur();
-
-		if(utilisateurRepo.findUtilisateurByUsername(utilDto.getUsername())==null && 
-				utilisateurRepo.findUtilisateurByEmail(utilDto.getEmail())==null)
-		{
-
-			typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
+        try
+        {
+        	typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
 			String nom= utilDto.getNom();
 			String prenom = utilDto.getPrenom();
 			String email = utilDto.getEmail();
@@ -165,9 +158,11 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			LocalDateTime creation_date = LocalDateTime.now();
 			Long idType = typeUtil.getIdType();
 			
+			System.out.println(nom + " "+prenom + " "+ email + " "+ username + " "+ password+ " "+phone +" "+creation_date+" "+idType);
+			
 			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type,creation_date)"
 					+ "values(?,?,?,?,?,?,?,?,?)",UtilisateurDto.class);
-			q.setParameter(1, nom);
+			q.setParameter(1, nom.toUpperCase());
 			q.setParameter(2, prenom);
 			q.setParameter(3, email);
 			q.setParameter(4, username);
@@ -179,12 +174,13 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			
 			q.executeUpdate();
 			return utilDto;
-		}
-		else
-		{
-			return null;
-		}
-		//return modelMapper.map(util, UtilisateurDto.class);
+        }
+        catch(Exception e)
+        {
+        	System.out.println(e.getMessage());
+        	return null;
+        }
+			
 	}
 
 	@Override

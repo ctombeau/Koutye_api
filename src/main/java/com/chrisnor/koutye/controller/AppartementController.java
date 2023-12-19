@@ -2,6 +2,7 @@ package com.chrisnor.koutye.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class AppartementController {
 	private AppartementService appService;
 	
 	@PostMapping("appartement/add")
+	@PreAuthorize("hasAuthority('SCOPE_Proprietaire')")
 	public ResponseEntity<Response> AddAppartement(@RequestBody Appartement appartement)
 	{
 		System.out.println(appartement);

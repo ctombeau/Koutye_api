@@ -42,6 +42,6 @@ public class Adresse implements Serializable{
    @NotNull
    private String pays;
    
-   @OneToMany(mappedBy="adresse", fetch=FetchType.LAZY, cascade = CascadeType.PERSIST)
+   @OneToMany(mappedBy="adresse", fetch=FetchType.LAZY) //, cascade = CascadeType.PERSIST)
    private List<Appartement> appartements;
 }

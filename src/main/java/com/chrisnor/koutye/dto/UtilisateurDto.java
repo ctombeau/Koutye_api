@@ -34,6 +34,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Builder
 public class UtilisateurDto {
+	
+	  private Long utilisateurId;
+	  
 	  @Column(nullable=false)
 	  private String nom;
 	  

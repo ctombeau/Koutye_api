@@ -42,7 +42,7 @@ public class Appartement implements Serializable {
 	@JoinColumn(name="utilisateur_id")
 	private Utilisateur utilisateur;
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="adresse_id")
 	private Adresse adresse;
 	
