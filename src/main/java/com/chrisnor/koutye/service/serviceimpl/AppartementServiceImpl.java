@@ -37,55 +37,43 @@ public class AppartementServiceImpl implements AppartementService{
 	private ImageAppartementRepository imgRepo;
 	private VideoAppartementRepository videoRepo;
 	private UtilisateurService utilService;
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	private EntityManager em;
 	
 	@Override
-	public Appartement PostAppartement(Appartement app) {
+	public AppartementDto PostAppartement(Appartement app) {
 		Appartement appartement = new Appartement();
 		ImageAppartement imgApp = new ImageAppartement();
 		VideoAppartement videoApp = new VideoAppartement();
 		
+		try
+		{
+			appartement.setDescription(app.getDescription());
+			appartement.setAdresse(app.getAdresse());
 		
-		appartement.setDescription(app.getDescription());
-		appartement.setAdresse(app.getAdresse());
+			Optional<UtilisateurDto> util = utilService.getUtilisateur(app.getUtilisateur().getUsername());
+			Utilisateur utilisateur = modelMapper.map(util, Utilisateur.class);
 		
-		Optional<UtilisateurDto> util = utilService.getUtilisateur(app.getUtilisateur().getUsername());
-		Utilisateur utilisateur = modelMapper.map(util, Utilisateur.class);
+			appartement.setUtilisateur(utilisateur);
 		
-		appartement.setUtilisateur(utilisateur);
-		
-		System.out.println(app.getImageAppartements());
-		
-		//appartement.setImageAppartements(app.getImageAppartements());
-		//appartement.setVideoAppartements(app.getVideoAppartements());
-		
-		
-		app.getImageAppartements().stream().forEach(img-> {
-			img.setAppartement(appartement);
-//			imgApp.setAppartement(appartement);
-//			imgApp.setDescriptionImage(img.getDescriptionImage());
-//			imgApp.setImage(img.getImage());
-//			System.out.println(imgApp);
-			//imgRepo.save(imgApp);
-		});
-		imgRepo.saveAll(app.getImageAppartements());
-		app.getVideoAppartements().stream().forEach(video->{
-			video.setAppartement(appartement);
-//			videoApp.setAppartement(appartement);
-//			videoApp.setDescriptionVideo(video.getDescriptionVideo());
-//			videoApp.setVideo(video.getVideo());
-//			System.out.println(videoApp);
-//			videoRepo.save(videoApp);
-		});
-		videoRepo.saveAll(app.getVideoAppartements());
-		appRepo.save(appartement);
-		
-		/*
-		System.out.println(utilisateur.getNom());
-		
-		*/
-		return null;
+			app.getImageAppartements().stream().forEach(img-> {
+				img.setAppartement(appartement);
+
+			});
+			imgRepo.saveAll(app.getImageAppartements());
+			
+			app.getVideoAppartements().stream().forEach(video->{
+				video.setAppartement(appartement);
+			});
+			videoRepo.saveAll(app.getVideoAppartements());
+				appRepo.save(appartement);
+		   return modelMapper.map(app, AppartementDto.class);
+		}
+		catch(Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			return null;
+		}
 	}
 
 	@Override
