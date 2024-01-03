@@ -14,14 +14,8 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface UtilisateurRepository extends CrudRepository<Utilisateur,Long>{
-	public Optional<Utilisateur> findUtilisateurByUsername(String username);
+	public Utilisateur findUtilisateurByUsername(String username);
 	public Utilisateur findUtilisateurByEmail(String email);
 	public Utilisateur findUtilisateurByUsernameAndPassword(String username, String password);
-//	@Transactional
-//	//@Modifying
-//	@Query(value = "insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type)values"
-//			+ "(?,?,?,?,?,?,?,?)",
-//			nativeQuery = true)
-//	Utilisateur saveUtilisateur(String nom, String prenom,String email, String username, String passwword, String phone, String photo,Long idType);
 
 }

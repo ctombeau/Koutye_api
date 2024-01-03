@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chrisnor.koutye.dto.AppartementDto;
 import com.chrisnor.koutye.model.Appartement;
@@ -30,9 +31,43 @@ public class AppartementController {
 	@PostMapping("appartement/add")
 	@PreAuthorize("hasAuthority('SCOPE_Proprietaire')")
 	@ResponseBody
-	public ResponseEntity<Response> AddAppartement(@RequestPart(required=true) Appartement appartement)
+	public ResponseEntity<Response> AddAppartement(@RequestBody Appartement app)
 	{
-		System.out.println(appartement);
+		/*
+		  {
+    "description":"Appartement de luxe avec 6 pieces",
+    "username": "ctombeau",
+    "adresse":{
+        "pays":"Haiti",
+        "departement":"Ouest",
+        "commune":"Delmas",
+        "rue":"Soeur Georges",
+        "numero": 13
+    },
+    "imageAppartements":[
+        {
+            "descriptionImage":"Chambre a coucher",
+            "image":""
+        },
+        {
+            "descriptionImage":"Cuisine",
+            "image":""
+        }
+    ],
+    
+    "videoAppartements":[
+        {
+            "descriptionVideo":"video de la cour",
+            "video":""
+        },
+        {
+            "descriptionVideo":"Chambre a coucher",
+            "video":""
+        }
+    ]
+}
+		 */
+		System.out.println("Appartement choisi: "+app);
 		/*
 		if(appartement != null)
 		{

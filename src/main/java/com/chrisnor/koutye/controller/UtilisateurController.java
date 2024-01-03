@@ -76,7 +76,8 @@ public class UtilisateurController {
 		ObjectMapper mapper = new ObjectMapper();
 		UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
 		
-		if(utilisateurRepo.findUtilisateurByUsername(utilisateurDto.getUsername()).isEmpty())
+		if(utilService.getUtilisateur(utilisateurDto.getUsername()) == null
+				&& utilService.getUtilisateurByEmail(utilisateurDto.getEmail()) == null)
 		{
 			retour = new FileUpload().UploadFiles(photo, userFolder + utilisateurDto.getUsername());
 			if (retour != null)

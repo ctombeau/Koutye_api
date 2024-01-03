@@ -47,7 +47,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Service
-@Transactional
+//@Transactional
 public class UtilisateurServiceImpl implements UtilisateurService{
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -101,24 +101,28 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	@Override
 	public Optional<UtilisateurDto> getUtilisateur(String username) {
         
-		Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
+	    Utilisateur util = utilisateurRepo.findUtilisateurByUsername(username);
+	                     //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		
 		if(util != null)
 		{
+			System.out.println("check username is not null");
 			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
 		}
 		else
 		{
+			System.out.println("check username is null");
 			return null;
 		}
 		
 	}
 
 	@Override
-	@Transactional
+	//@Transactional
 	public void Login(String username, String password) {
 		Utilisateur utilisateur = new Utilisateur();
-		utilisateur = utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
+		utilisateur = utilisateurRepo.findUtilisateurByUsername(username);
+		            //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		
 		if(utilisateur != null && passwordEncoder.matches(password, utilisateur.getPassword()))
 		{
@@ -208,6 +212,23 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 								);
 		String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
 		return Map.of("access-token",jwt);
+	}
+
+	@Override
+	public Optional<UtilisateurDto> getUtilisateurByEmail(String email) {
+		Utilisateur util = utilisateurRepo.findUtilisateurByEmail(email);
+        //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
+
+		if(util != null)
+		{
+			System.out.println("check email is not null");
+			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
+		}
+		else
+		{
+			System.out.println("check email is null");
+			return null;
+		}
 	}
 	
 	
