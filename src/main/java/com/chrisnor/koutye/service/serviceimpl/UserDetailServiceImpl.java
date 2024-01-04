@@ -29,7 +29,8 @@ public class UserDetailServiceImpl implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		if(username == null || username.isEmpty())
 			throw new InvalidInputException();
-	    Utilisateur utilisateur= utilisateurRepo.findUtilisateurByUsername(username).orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
+	    Utilisateur utilisateur= utilisateurRepo.findUtilisateurByUsername(username);
+	                            //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 		//String authorithy = new SimpleGrantedAuthority(utilisateur.getTypeUtilisateur()).toString();
 	    //utilisateur.getRoles().stream().map(u->u.getTypeUtilisateur());
 	    //utilisateur.getTypeUtilisateur();

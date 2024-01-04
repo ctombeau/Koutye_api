@@ -15,6 +15,8 @@ public interface UtilisateurService {
 	public List<UtilisateurDto> getAllUtilisateurs();
 	public Optional<UtilisateurDto> getUtilisateur(String username);
 	public Optional<UtilisateurDto> getUtilisateurByEmail(String email);
+	public UtilisateurDto setUpdate(Long id, UtilisateurDto utilDto);
+	//public Optional<UtilisateurDto> getUtilisateurByUsernameExceptUserId();
 	public void Login(String username, String password);
 	public long FindIdTypeByNomType(String nomType);
 	public Map<String, String> GenerateToken(String username, Authentication authentication);

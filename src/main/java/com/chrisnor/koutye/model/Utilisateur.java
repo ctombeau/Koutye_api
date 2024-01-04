@@ -25,6 +25,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,7 @@ public class Utilisateur implements Serializable{
   
   
   @Column(unique=true, nullable=false)
+  @Email(message="veuillez fournir un email correct")
   private String email;
   
   @Column(nullable=false)

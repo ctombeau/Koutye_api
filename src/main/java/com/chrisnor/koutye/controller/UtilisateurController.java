@@ -44,6 +44,9 @@ import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,7 +72,7 @@ public class UtilisateurController {
 	
 
 	@PostMapping(value="/user/add")
-	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo, @RequestParam String model)
+	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo,@Valid @RequestParam String model)
 			throws Exception {
 		  
 		String retour;
@@ -79,6 +82,7 @@ public class UtilisateurController {
 		if(utilService.getUtilisateur(utilisateurDto.getUsername()) == null
 				&& utilService.getUtilisateurByEmail(utilisateurDto.getEmail()) == null)
 		{
+			System.out.println("on est dans le save du controlleur");
 			retour = new FileUpload().UploadFiles(photo, userFolder + utilisateurDto.getUsername());
 			if (retour != null)
 				utilisateurDto.setPhoto(retour.replace("\\", "/"));

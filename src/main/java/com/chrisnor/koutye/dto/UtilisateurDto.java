@@ -23,6 +23,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,7 @@ public class UtilisateurDto {
 	  private String username;
 	  
 	  @Column(unique=true, nullable=false)
+	  @Email(message="veuillez fournir un email correct")
 	  private String email;
 	  
 	  @JsonProperty(access = Access.WRITE_ONLY)

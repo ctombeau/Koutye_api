@@ -47,7 +47,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Service
-//@Transactional
+@Transactional
 public class UtilisateurServiceImpl implements UtilisateurService{
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -66,30 +66,48 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	
 	@Autowired
 	private JwtEncoder jwtEncoder;
+	
+	public UtilisateurDto setUpdate(Long id,UtilisateurDto utilDto)
+	{
+		TypeUtilisateur typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
+		Query q = em.createNativeQuery("update utilisateur set nom=:userNom,prenom=:userPrenom,email=:userEmail,"
+				+ "username=:userName,password=:userPassword,phone=:userPhone,photo=:userPhoto,id_type=:userType,"
+				+ "modification_date=:userDate where utilisateur_id=:userId",UtilisateurDto.class);
+		q.setParameter("userNom", utilDto.getNom().toUpperCase());
+		q.setParameter("userPrenom", utilDto.getPrenom());
+		q.setParameter("userEmail", utilDto.getEmail());
+		q.setParameter("userName", utilDto.getUsername());
+		q.setParameter("userPassword", passwordEncoder.encode(utilDto.getPassword()));
+		q.setParameter("userPhone", utilDto.getPhone());
+		q.setParameter("userPhoto", utilDto.getPhoto());
+		q.setParameter("userType", typeUtil.getIdType());
+		q.setParameter("userDate", LocalDateTime.now());
+		q.setParameter("userId", id);
+		q.executeUpdate();
+		
+		return utilDto;
+	}
 
 	@Override
 	public UtilisateurDto PutUtilisateur(Long id, UtilisateurDto utilDto) {
 		Utilisateur util = utilisateurRepo.findById(id).get();
-		TypeUtilisateur typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
-		
 		if(util != null)
 		{
-			Query q = em.createNativeQuery("update utilisateur set nom=:userNom,prenom=:userPrenom,email=:userEmail,"
-					+ "username=:userName,password=:userPassword,phone=:userPhone,photo=:userPhoto,id_type=:userType,"
-					+ "modification_date=:userDate where utilisateur_id=:userId",UtilisateurDto.class);
-			q.setParameter("userNom", utilDto.getNom().toUpperCase());
-			q.setParameter("userPrenom", utilDto.getPrenom());
-			q.setParameter("userEmail", utilDto.getEmail());
-			q.setParameter("userName", utilDto.getUsername());
-			q.setParameter("userPassword", passwordEncoder.encode(utilDto.getPassword()));
-			q.setParameter("userPhone", utilDto.getPhone());
-			q.setParameter("userPhoto", utilDto.getPhoto());
-			q.setParameter("userType", typeUtil.getIdType());
-			q.setParameter("userDate", LocalDateTime.now());
-			q.setParameter("userId", id);
-			q.executeUpdate();
-			
-			return utilDto;
+			if(!util.getUsername().equals(utilDto.getUsername()) || !util.getEmail().equals(utilDto.getEmail()))
+			{
+				if(this.getUtilisateur(utilDto.getUsername())==null && this.getUtilisateurByEmail(utilDto.getEmail())==null)
+				{
+					return this.setUpdate(id, utilDto);
+				}
+				else
+				{
+				  return null;
+				}
+			}
+			else
+			{
+				return this.setUpdate(id, utilDto);
+			}
 		}
 		else
 		{
@@ -106,12 +124,10 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		
 		if(util != null)
 		{
-			System.out.println("check username is not null");
 			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
 		}
 		else
 		{
-			System.out.println("check username is null");
 			return null;
 		}
 		
@@ -221,12 +237,10 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 		if(util != null)
 		{
-			System.out.println("check email is not null");
 			return Optional.of(modelMapper.map(util, UtilisateurDto.class));
 		}
 		else
 		{
-			System.out.println("check email is null");
 			return null;
 		}
 	}
