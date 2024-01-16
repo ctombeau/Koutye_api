@@ -4,16 +4,22 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@Configuration
 public class KoutyeApplication {
 
 	public static void main(String[] args) {
@@ -25,6 +31,8 @@ public class KoutyeApplication {
 	    return new ModelMapper();
 	}
 	
+	
+	/*
 	@Bean
 	public CorsFilter corsFilter()
 	{
@@ -47,4 +55,6 @@ public class KoutyeApplication {
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 		
 	}
+	*/
+	
 }

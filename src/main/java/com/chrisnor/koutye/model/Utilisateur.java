@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -88,10 +90,12 @@ public class Utilisateur implements Serializable{
   @Column(name="logout_date",nullable=true)
   private LocalDateTime logoutDate;
   
+  //@JsonManagedReference
   @ManyToOne(cascade=CascadeType.ALL)
   @JoinColumn(name="id_type")
   private TypeUtilisateur typeUtilisateur;
   
+  //@JsonManagedReference
   @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY, cascade = CascadeType.PERSIST)
   private List<Appartement> appartements;
   

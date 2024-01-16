@@ -1,5 +1,7 @@
 package com.chrisnor.koutye.config;
 
+import java.util.Arrays;
+
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.chrisnor.koutye.service.serviceimpl.UserDetailServiceImpl;
 import com.chrisnor.koutye.service.serviceimpl.UtilisateurServiceImpl;
@@ -71,7 +76,9 @@ public class SecurityConfig{
 				
 				//ou
 				.oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
-				//.userDetailsService(userDetailServiceImpl)
+				.cors(cors -> cors
+                        .configurationSource(corsConfigurationSource()))
+				.cors(cors -> cors.disable())
 				.build();
 	}
 	
@@ -109,6 +116,25 @@ public class SecurityConfig{
 		daoAuthenticationProvider.setPasswordEncoder(this.passwordEncoder());
 		return daoAuthenticationProvider;
 	}
+	
+	
+	@Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        configuration.addAllowedOrigin("http://localhost:4200");
+        configuration.addAllowedOrigin("http://localhost:8100");
+        //configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+        
+    }
+	
 	
 	/*
 	@Bean

@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,7 @@ public class Appartement implements Serializable {
 	@NotNull
 	private String description;
 	
+	//@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name="utilisateur_id")
 	private Utilisateur utilisateur;
@@ -45,7 +48,7 @@ public class Appartement implements Serializable {
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="adresse_id")
 	private Adresse adresse;
-	
+	 
 	@OneToOne(mappedBy="appartement")
 	private Ferme ferme;
 	

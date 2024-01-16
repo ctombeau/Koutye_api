@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -150,15 +153,24 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		
 	}
 
+	/*
 	@Override
-	public List<UtilisateurDto> getAllUtilisateurs() {
-		
+	public Page<Utilisateur> getAllUtilisateurs(int pageNo, int pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Utilisateur> utilisateurs = utilisateurRepo.findAll(paging);
+        		                         
+         return utilisateurs;
+
+	}
+	*/
+	
+	@Override
+	public List<UtilisateurDto> getUtilisateurs() {
 		List<Utilisateur> utilisateurs = (List<Utilisateur>) utilisateurRepo.findAll();
 		
 		return  utilisateurs.stream()
-							.map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
+				            .map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
 							.collect(Collectors.toList());
-
 	}
 
 	@Override
@@ -244,6 +256,8 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			return null;
 		}
 	}
+
+	
 	
 	
    

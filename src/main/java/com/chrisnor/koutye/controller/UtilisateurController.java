@@ -11,6 +11,7 @@ import org.apache.commons.io.IOExceptionList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -158,11 +159,23 @@ public class UtilisateurController {
 			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 		}
 	}
-
+   
+	/*
+	@GetMapping("/users-page")
+	//@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")
+	public ResponseEntity<Response> ListUtilisateurs(@RequestParam int pageNo, @RequestParam int pageSize) {
+		Page<Utilisateur> utilisateurs = utilService.getAllUtilisateurs(pageNo,pageSize);
+		if(utilisateurs.isEmpty())
+		   return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
+	}
+	*/
+	
 	@GetMapping("/users")
-	@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")
+	//@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")
 	public ResponseEntity<Response> ListUtilisateurs() {
-		List<UtilisateurDto> utilisateurs = utilService.getAllUtilisateurs();
+		List<UtilisateurDto> utilisateurs = utilService.getUtilisateurs();
 		if(utilisateurs.isEmpty())
 		   return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
 		else

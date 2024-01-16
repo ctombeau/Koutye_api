@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,6 +40,7 @@ public class TypeUtilisateur implements Serializable{
    @Column(name="nom_type",unique=true, nullable=false)
    private String nomType;
    
+   //@JsonBackReference
    @OneToMany(mappedBy="typeUtilisateur", fetch=FetchType.LAZY)
    private List<Utilisateur> utilisateurs;
 }
