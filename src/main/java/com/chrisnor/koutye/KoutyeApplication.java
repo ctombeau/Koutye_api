@@ -16,11 +16,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.chrisnor.koutye.service.EmailService;
+
 //import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @Configuration
 public class KoutyeApplication {
+	@Autowired
+	private EmailService emailService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KoutyeApplication.class, args);
@@ -31,6 +35,10 @@ public class KoutyeApplication {
 	    return new ModelMapper();
 	}
 	
+	@EventListener(ApplicationReadyEvent.class)
+	public void triggerMail(){
+		emailService.sendEmail("jeanedmasherley@gmail.com", "Je test l'email de mon application chherie", "Test Email");
+	}
 	
 	/*
 	@Bean
