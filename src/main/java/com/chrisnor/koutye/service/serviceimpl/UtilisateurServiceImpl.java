@@ -163,15 +163,16 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	}
 	*/
-	
+	/*
 	@Override
 	public List<UtilisateurDto> getUtilisateurs() {
-		List<Utilisateur> utilisateurs = (List<Utilisateur>) utilisateurRepo.findAll();
+		List<Utilisateur> utilisateurs = utilisateurRepo.findAll();
 		
 		return  utilisateurs.stream()
 				            .map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
 							.collect(Collectors.toList());
 	}
+	*/
 
 	@Override
 	public UtilisateurDto PostUtilisateur( UtilisateurDto utilDto) {
@@ -255,6 +256,41 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		{
 			return null;
 		}
+	}
+
+	@Override
+	public String generateDefaultPassword() 
+	{
+        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "abcdefghijklmnopqrstuvxyz"
+        		+ "0123456789"
+                +"@#$"; 
+
+        StringBuilder s = new StringBuilder(10); 
+
+        for (int i = 0; i < 10; i++) { 
+        	int index = (int)(str.length() * Math.random()); 
+        	s.append(str.charAt(index)); 
+        } 
+        return s.toString(); 
+	}
+
+	@Override
+	public void setPassword(String password, String email) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean verifyEmail(String email) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<UtilisateurDto> getUtilisateurs() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

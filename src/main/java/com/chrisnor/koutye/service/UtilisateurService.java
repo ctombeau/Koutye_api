@@ -23,4 +23,7 @@ public interface UtilisateurService {
 	public void Login(String username, String password);
 	public long FindIdTypeByNomType(String nomType);
 	public Map<String, String> GenerateToken(String username, Authentication authentication);
+	public String generateDefaultPassword();
+	public void setPassword(String password, String email);
+	public boolean verifyEmail(String email);
 }

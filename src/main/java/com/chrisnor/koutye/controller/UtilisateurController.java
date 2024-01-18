@@ -181,4 +181,10 @@ public class UtilisateurController {
 		else
 			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
 	}
+	
+	@GetMapping("/default-password")
+	public String getDefaultPassword()
+	{
+		return utilService.generateDefaultPassword();
+	}
 }
