@@ -283,8 +283,13 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public boolean verifyEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
+		Optional<UtilisateurDto> util = this.getUtilisateurByEmail(email);
+		if(util.get() != null)
+		{
+			return true;
+		}
+		else
+		  return false;
 	}
 
 	@Override

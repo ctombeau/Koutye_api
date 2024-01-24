@@ -21,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.chrisnor.koutye.dto.LoginDto;
 import com.chrisnor.koutye.dto.UtilisateurDto;
@@ -43,9 +47,12 @@ import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.repository.UtilisateurRepository;
 import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
+import com.chrisnor.koutye.service.EmailService;
 import com.chrisnor.koutye.service.UtilisateurService;
+import com.chrisnor.koutye.utils.IdentityUserEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -71,6 +78,11 @@ public class UtilisateurController {
 	@Autowired
 	private UtilisateurRepository utilisateurRepo;
 	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private SpringTemplateEngine templateEngine;
 
 	@PostMapping(value="/user/add")
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo,@Valid @RequestParam String model)
@@ -180,6 +192,30 @@ public class UtilisateurController {
 		   return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
 		else
 			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
+	}
+	
+	@GetMapping("/send-email")
+	public ResponseEntity<Response> getEmail(@RequestParam String emailTo, Model model) throws MessagingException
+	{
+		String subject = "Changement de mot de passe.";
+		UtilisateurDto util = new UtilisateurDto();
+		//Context thymeleafContext = new Context();
+		 
+		
+		if(utilService.verifyEmail(emailTo))
+		{
+			 String defaultPassword = utilService.generateDefaultPassword();
+
+			 //thymeleafContext.setVariable("defaultPassword",defaultPassword);
+			 //String result = templateEngine.process("email", thymeleafContext);
+			 model.addAttribute("defaultPassword", defaultPassword);
+			 util = utilService.getUtilisateurByEmail(emailTo).get();
+			 
+			 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmail(util));
+			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
+		}
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.NOT_FOUND, "Aucun email ne correspond...");
 	}
 	
 	@GetMapping("/default-password")
