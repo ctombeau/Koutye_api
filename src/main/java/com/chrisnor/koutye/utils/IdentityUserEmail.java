@@ -19,4 +19,14 @@ public class IdentityUserEmail {
 		obj.put("copyRightDate", String.valueOf(LocalDate.now().getYear()));
 		return obj;
 	}
+	
+	public static Map<String, Object> getIdentityUserEmailPassword(UtilisateurDto user, String password) {
+		Map<String, Object> obj = new HashMap<String, Object>();
+		obj.put("nom", user.getNom());
+		obj.put("prenom", user.getPrenom());
+		obj.put("username", user.getUsername());
+		obj.put("password", password);
+		obj.put("copyRightDate", String.valueOf(LocalDate.now().getYear()));
+		return obj;
+	}
 }

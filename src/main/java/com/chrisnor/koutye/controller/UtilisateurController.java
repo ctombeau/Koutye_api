@@ -205,13 +205,9 @@ public class UtilisateurController {
 		if(utilService.verifyEmail(emailTo))
 		{
 			 String defaultPassword = utilService.generateDefaultPassword();
-
-			 //thymeleafContext.setVariable("defaultPassword",defaultPassword);
-			 //String result = templateEngine.process("email", thymeleafContext);
-			 model.addAttribute("defaultPassword", defaultPassword);
 			 util = utilService.getUtilisateurByEmail(emailTo).get();
 			 
-			 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmail(util));
+			 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmailPassword(util,defaultPassword));
 			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
 		}
 		else

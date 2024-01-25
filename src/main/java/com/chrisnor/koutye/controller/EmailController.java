@@ -27,17 +27,12 @@ public class EmailController {
 	
 	@Autowired
 	private UtilisateurService utilService;
-	
+	 
 	@GetMapping("/change-password")
 	public ResponseEntity<?> sendMail(@RequestParam String emailTo) throws MessagingException
 	{
 		 UtilisateurDto util = new UtilisateurDto();
 		 util = utilService.getUtilisateurByEmail(emailTo).get();
-		 System.out.println("on test....");
-		 System.out.println(util.getNom());
-		 System.out.println(util.getPrenom());
-		 System.out.println(util.getUsername());
-		 System.out.println(util.getEmail());
 		 String subject = "Changement de mot de passe.";
 		 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmail(util));
 		 return null;
