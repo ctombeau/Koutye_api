@@ -71,6 +71,7 @@ public class SecurityConfig{
 				.csrf(csrf->csrf.disable())
 				.authorizeRequests(ar->ar.requestMatchers("/api/login/**").permitAll())
 				.authorizeRequests(ar->ar.requestMatchers("/api/user/add/**").permitAll())
+				.authorizeRequests(ar->ar.requestMatchers("/api/send-email?emailTo=**").permitAll())
 				.authorizeRequests(ar->ar.anyRequest().authenticated())
 				//.httpBasic(Customizer.withDefaults())
 				//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
@@ -123,17 +124,10 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        //configuration.addAllowedOrigin("http://localhost:4200");
-       // configuration.addAllowedOrigin("http://localhost:8100");
+        
         configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-       // configuration.setAllowCredentials(true);
-       
-       // configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        //configuration.setExposedHeaders(Arrays.asList("custom-header1", "custom-header2"));
-       // configuration.setExposedHeaders(Arrays.asList("origin","Content-Type","Accept","Jwt-Token","Aurhorization",
-		//		"Access-Control-Allow-Origin","Access-control-Allow-Credentials","File-Name"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 

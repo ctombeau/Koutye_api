@@ -197,7 +197,7 @@ public class UtilisateurController {
 	}
 	
 	@GetMapping("/send-email")
-	public ResponseEntity<Response> getEmail(@RequestParam String emailTo, Model model) throws MessagingException
+	public ResponseEntity<Response> getEmail(@RequestParam String emailTo) throws MessagingException
 	{
 		String subject = "Changement de mot de passe.";
 		UtilisateurDto util = new UtilisateurDto();
@@ -208,7 +208,7 @@ public class UtilisateurController {
 		{
 			 String defaultPassword = utilService.generateDefaultPassword();
 			 util = utilService.getUtilisateurByEmail(emailTo).get();
-			 
+			 utilService.setPassword(defaultPassword, emailTo);
 			 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmailPassword(util,defaultPassword));
 			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
 		}
