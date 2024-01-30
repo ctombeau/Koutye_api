@@ -31,6 +31,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import com.chrisnor.koutye.service.serviceimpl.UserDetailServiceImpl;
 import com.chrisnor.koutye.service.serviceimpl.UtilisateurServiceImpl;
@@ -122,12 +123,17 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.addAllowedOrigin("http://localhost:4200");
-        configuration.addAllowedOrigin("http://localhost:8100");
-        //configuration.addAllowedOrigin("*");
+        //configuration.addAllowedOrigin("http://localhost:4200");
+       // configuration.addAllowedOrigin("http://localhost:8100");
+        configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-
+       // configuration.setAllowCredentials(true);
+       
+       // configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        //configuration.setExposedHeaders(Arrays.asList("custom-header1", "custom-header2"));
+       // configuration.setExposedHeaders(Arrays.asList("origin","Content-Type","Accept","Jwt-Token","Aurhorization",
+		//		"Access-Control-Allow-Origin","Access-control-Allow-Credentials","File-Name"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 

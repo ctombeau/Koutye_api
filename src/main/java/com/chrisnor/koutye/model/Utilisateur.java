@@ -28,6 +28,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,7 +37,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor 
 @AllArgsConstructor
 @Entity
-
 public class Utilisateur implements Serializable{
 	
   /**
@@ -73,6 +73,9 @@ public class Utilisateur implements Serializable{
   //@Lob
   @Basic(fetch = FetchType.LAZY)
   private String photo;
+  
+ // @Column(nullable=true)
+ // private boolean actif;
   
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name="creation_date",nullable=true)

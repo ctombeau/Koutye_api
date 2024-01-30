@@ -277,8 +277,14 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public void setPassword(String password, String email) {
-		// TODO Auto-generated method stub
-		
+		String passwordEncode = passwordEncoder.encode(password);
+		Query q = em.createNativeQuery("update utilisateur set password=:pass where email=:mail and "
+				+ "modification_date=:mdate and actif=:actif");
+		q.setParameter("pass", passwordEncode);
+		q.setParameter("mail", email);
+		q.setParameter("mdate", LocalDateTime.now());
+		q.setParameter("actif", false);
+		q.executeUpdate();
 	}
 
 	@Override

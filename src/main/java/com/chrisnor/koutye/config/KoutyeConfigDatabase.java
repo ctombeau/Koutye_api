@@ -31,7 +31,7 @@ transactionManagerRef = "KoutyeTransactionManager",
 basePackages="com.chrisnor.koutye")
 @EnableAutoConfiguration
 public class KoutyeConfigDatabase {
-
+  
 	 @Value("${spring.datasource.driver-class-name}")
 	 private String driver;
 	 
@@ -96,7 +96,7 @@ public class KoutyeConfigDatabase {
      properties.put("hibernate.hbm2ddl.auto","none");
      properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
      properties.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
-     properties.put("hibernate.show_sql","false");
+     properties.put("hibernate.show_sql","true");
      properties.put("hibernate.format_sql","true");
      properties.put("entitymanager.packages.to.scan",packageScan);
    
