@@ -58,8 +58,7 @@ public class UtilisateurDto {
 	  @Column(nullable=false)
 	  private String phone;
 	  
-	  @Lob
-	  @Basic(fetch = FetchType.LAZY)
+	  //@Basic(fetch = FetchType.LAZY)
 	  @Column(nullable=true)
 	  private String photo;
 	  

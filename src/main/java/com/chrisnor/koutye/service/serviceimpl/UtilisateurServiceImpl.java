@@ -283,6 +283,8 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		q.setParameter("mail", email);
 		q.setParameter("mdate", LocalDateTime.now());
 		q.executeUpdate();
+		
+		
 	}
 
 	@Override
@@ -300,6 +302,15 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	public List<UtilisateurDto> getUtilisateurs() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updateProfilePicture(String username, String path) {
+		Query q = em.createNativeQuery("update utilisateur set photo=:photo where username=:username");
+		q.setParameter("photo", path)
+		             .setParameter("username", username)
+		             .executeUpdate();
+		
 	}
 
 	

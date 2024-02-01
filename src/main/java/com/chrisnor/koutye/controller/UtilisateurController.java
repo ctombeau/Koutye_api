@@ -87,21 +87,15 @@ public class UtilisateurController {
 	private SpringTemplateEngine templateEngine;
 
 	@PostMapping(value="/user/add")
-	public ResponseEntity<Response> AjouterUtilisateur(@RequestParam MultipartFile photo,@Valid @RequestParam String model)
-			throws Exception {
-		  
-		String retour;
-		ObjectMapper mapper = new ObjectMapper();
-		UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
+	public ResponseEntity<Response> AjouterUtilisateur(@RequestBody UtilisateurDto utilisateurDto)
+	 {
+		//ObjectMapper mapper = new ObjectMapper();
+		//UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
+		System.out.println("On est dans le controleur");
 		
 		if(utilService.getUtilisateur(utilisateurDto.getUsername()) == null
 				&& utilService.getUtilisateurByEmail(utilisateurDto.getEmail()) == null)
 		{
-			System.out.println("on est dans le save du controlleur");
-			retour = new FileUpload().UploadFiles(photo, userFolder + utilisateurDto.getUsername());
-			if (retour != null)
-				utilisateurDto.setPhoto(retour.replace("\\", "/"));
-
 			UtilisateurDto util = utilService.PostUtilisateur(utilisateurDto);
 			return responseGenerator.SuccessResponse(HttpStatus.CREATED, util);
 		}
@@ -109,7 +103,6 @@ public class UtilisateurController {
 		{
 			return responseGenerator.ErrorResponse(HttpStatus.CONFLICT, "Utilisateur existe deja");
 		}
-		
 	}
 	
 	@PostMapping("/login")
@@ -220,5 +213,20 @@ public class UtilisateurController {
 	public String getDefaultPassword()
 	{
 		return utilService.generateDefaultPassword();
+	}
+	
+	@PostMapping("/update-picture")
+	public ResponseEntity<?> setProfilePicture(@RequestParam String username, @RequestParam MultipartFile photo) throws IOException
+	{
+		String retour;
+		retour = new FileUpload().UploadFiles(photo, userFolder + username);
+		if (retour != null)
+		{
+			retour = retour.replace("\\", "/");
+			utilService.updateProfilePicture(username,retour );
+			return responseGenerator.SuccessResponse(HttpStatus.CREATED, retour);
+		}
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.NOT_MODIFIED, null);
 	}
 }

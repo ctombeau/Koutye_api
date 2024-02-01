@@ -26,4 +26,5 @@ public interface UtilisateurService {
 	public String generateDefaultPassword();
 	public void setPassword(String password, String email);
 	public boolean verifyEmail(String email);
+	public void updateProfilePicture(String username, String path);
 }
