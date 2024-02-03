@@ -82,7 +82,7 @@ public class KoutyeConfigDatabase {
  }
 
  @Bean(name = "KoutyeSessionFactory")
- public LocalSessionFactoryBean PwsSessionFactory() {
+ public LocalSessionFactoryBean KoutyeSessionFactory() {
      LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
      sessionFactoryBean.setDataSource(koutyeDataSource());
    
@@ -99,7 +99,7 @@ public class KoutyeConfigDatabase {
      properties.put("hibernate.show_sql","true");
      properties.put("hibernate.format_sql","true");
      properties.put("entitymanager.packages.to.scan",packageScan);
-   
+     //properties.put("hibernate.ddl_auto", "update");
      return properties;
  }	 
 

@@ -17,10 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -50,6 +53,7 @@ import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.EmailService;
 import com.chrisnor.koutye.service.UtilisateurService;
+import com.chrisnor.koutye.service.serviceimpl.UserDetailServiceImpl;
 import com.chrisnor.koutye.utils.IdentityUserEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -106,19 +110,22 @@ public class UtilisateurController {
 	}
 	
 	@PostMapping("/login")
-	public Map<String, String> Login(@RequestBody LoginDto loginDto)
+	public ResponseEntity<Response> Login(@RequestBody LoginDto loginDto)
 	{
   
 		Authentication authentication = authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
-		
-		if(authentication.isAuthenticated())
+		System.out.println(authentication.getPrincipal());
+		if(authentication.getPrincipal() instanceof UserDetails)
 		{
 			utilService.Login(loginDto.getUsername(), loginDto.getPassword());
-			return utilService.GenerateToken(loginDto.getUsername(),authentication);
+			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(loginDto.getUsername(),authentication));
+			//return utilService.GenerateToken(loginDto.getUsername(),authentication);
 		}
-		return Map.of("message", "username ou password incorrect");
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username ou password incorrect"));
+		//return Map.of("message", "username ou password incorrect");
 	}
 
 	@GetMapping("/user")

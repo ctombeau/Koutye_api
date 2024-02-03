@@ -306,15 +306,12 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public void updateProfilePicture(String username, String path) {
-		Query q = em.createNativeQuery("update utilisateur set photo=:photo where username=:username");
+		Query q = em.createNativeQuery("update utilisateur set photo=:photo,modification_date=:mdate where username=:username");
 		q.setParameter("photo", path)
+					 .setParameter("mdate", LocalDateTime.now())
 		             .setParameter("username", username)
 		             .executeUpdate();
 		
 	}
-
-	
-	
-	
    
 }
