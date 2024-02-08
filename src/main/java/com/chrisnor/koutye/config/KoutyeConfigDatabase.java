@@ -22,7 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import jakarta.persistence.EntityManagerFactory;
-
+/*
 @Configuration
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
@@ -30,8 +30,9 @@ import jakarta.persistence.EntityManagerFactory;
 transactionManagerRef = "KoutyeTransactionManager",
 basePackages="com.chrisnor.koutye")
 @EnableAutoConfiguration
+*/
 public class KoutyeConfigDatabase {
-  
+  /*
 	 @Value("${spring.datasource.driver-class-name}")
 	 private String driver;
 	 
@@ -78,7 +79,7 @@ public class KoutyeConfigDatabase {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(KoutyeEntityManager().getObject());
     return transactionManager;
-   //  return new JpaTransactionManager(PwsEntityManagerFactory);
+   
  }
 
  @Bean(name = "KoutyeSessionFactory")
@@ -99,8 +100,8 @@ public class KoutyeConfigDatabase {
      properties.put("hibernate.show_sql","true");
      properties.put("hibernate.format_sql","true");
      properties.put("entitymanager.packages.to.scan",packageScan);
-     //properties.put("hibernate.ddl_auto", "update");
+     
      return properties;
  }	 
-
+*/
 }

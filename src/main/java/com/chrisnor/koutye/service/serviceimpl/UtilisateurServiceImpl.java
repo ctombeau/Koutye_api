@@ -193,8 +193,8 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			
 			System.out.println(nom + " "+prenom + " "+ email + " "+ username + " "+ password+ " "+phone +" "+creation_date+" "+idType);
 			
-			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type,creation_date)"
-					+ "values(?,?,?,?,?,?,?,?,?)",UtilisateurDto.class);
+			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type,creation_date, actif)"
+					+ "values(?,?,?,?,?,?,?,?,?,?)",UtilisateurDto.class);
 			q.setParameter(1, nom.toUpperCase());
 			q.setParameter(2, prenom);
 			q.setParameter(3, email);
@@ -204,6 +204,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			q.setParameter(7, photo);
 			q.setParameter(8, idType);
 			q.setParameter(9, creation_date);
+			q.setParameter(10, true);
 			
 			q.executeUpdate();
 			return utilDto;
@@ -246,7 +247,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	@Override
 	public Optional<UtilisateurDto> getUtilisateurByEmail(String email) {
 		Utilisateur util = utilisateurRepo.findUtilisateurByEmail(email);
-        //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
 
 		if(util != null)
 		{
@@ -278,13 +278,12 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	@Override
 	public void setPassword(String password, String email) {
 		String passwordEncode = passwordEncoder.encode(password);
-		Query q = em.createNativeQuery("update utilisateur set password=:pass, modification_date=:mdate where email=:mail");
+		Query q = em.createNativeQuery("update utilisateur set password=:pass, modification_date=:mdate,actif=:actif where email=:mail");
 		q.setParameter("pass", passwordEncode);
 		q.setParameter("mail", email);
 		q.setParameter("mdate", LocalDateTime.now());
+		q.setParameter("actif", false);
 		q.executeUpdate();
-		
-		
 	}
 
 	@Override
@@ -311,6 +310,34 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 					 .setParameter("mdate", LocalDateTime.now())
 		             .setParameter("username", username)
 		             .executeUpdate();
+		
+	}
+
+	@Override
+	public UtilisateurDto firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword) {
+		Optional<UtilisateurDto> utilDto = getUtilisateurByEmail(email);
+		if(utilDto.isPresent())
+		{
+			if(passwordEncoder.matches(oldPassword,utilDto.get().getPassword()))
+			{
+				String newPasswordEncrypt = passwordEncoder.encode(newPassword);
+				Query q = em.createNativeQuery("update utilisateur set login_date=:ldate, password=:password, actif=:actif where email=:email");
+				q.setParameter("ldate", LocalDateTime.now());
+				q.setParameter("password", newPasswordEncrypt);
+				q.setParameter("actif", true);
+				q.setParameter("email", email);
+				q.executeUpdate();
+				return utilDto.get();
+			}
+			else
+			{
+				System.out.println("Optional n'est pas present");
+				return null;
+			}
+				
+		}
+		else
+			return null;
 		
 	}
    

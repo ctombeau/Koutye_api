@@ -44,6 +44,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.chrisnor.koutye.dto.LoginDto;
+import com.chrisnor.koutye.dto.LoginForgetPasswordDto;
 import com.chrisnor.koutye.dto.UtilisateurDto;
 import com.chrisnor.koutye.dto.UtilisateurFileDto;
 import com.chrisnor.koutye.file.FileUpload;
@@ -93,9 +94,6 @@ public class UtilisateurController {
 	@PostMapping(value="/user/add")
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestBody UtilisateurDto utilisateurDto)
 	 {
-		//ObjectMapper mapper = new ObjectMapper();
-		//UtilisateurDto utilisateurDto = mapper.readValue(model, UtilisateurDto.class);
-		System.out.println("On est dans le controleur");
 		
 		if(utilService.getUtilisateur(utilisateurDto.getUsername()) == null
 				&& utilService.getUtilisateurByEmail(utilisateurDto.getEmail()) == null)
@@ -112,20 +110,38 @@ public class UtilisateurController {
 	@PostMapping("/login")
 	public ResponseEntity<Response> Login(@RequestBody LoginDto loginDto)
 	{
-  
 		Authentication authentication = authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
-		System.out.println(authentication.getPrincipal());
-		if(authentication.getPrincipal() instanceof UserDetails)
+		Optional<UtilisateurDto> util = utilService.getUtilisateur(loginDto.getUsername());
+		
+		if(authentication.isAuthenticated() && util.get().isActif()==true)
 		{
 			utilService.Login(loginDto.getUsername(), loginDto.getPassword());
 			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(loginDto.getUsername(),authentication));
-			//return utilService.GenerateToken(loginDto.getUsername(),authentication);
 		}
 		else
-			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username ou password incorrect"));
-		//return Map.of("message", "username ou password incorrect");
+			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username et/ou password incorrect"));
+		
+	}
+	
+	@PostMapping("/login-first")
+	public ResponseEntity<Response> FirstLogin(@RequestBody LoginForgetPasswordDto loginDto)
+	{
+		UtilisateurDto utilDto = utilService
+				               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
+		System.out.println("Username: "+utilDto.getUsername());
+		if(utilDto != null)
+		{
+			System.out.println("Tu n'es pas nul");
+			Authentication authentication = authenticationManager.authenticate(
+					 new UsernamePasswordAuthenticationToken(utilDto.getUsername(),loginDto.getNewPassword())
+					);
+			System.out.println(authentication.getPrincipal());
+			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(utilDto.getUsername(),authentication));
+		}
+		else
+			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username et/ou password incorrect"));
 	}
 
 	@GetMapping("/user")

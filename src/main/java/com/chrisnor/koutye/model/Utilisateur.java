@@ -74,8 +74,8 @@ public class Utilisateur implements Serializable{
   @Basic(fetch = FetchType.LAZY)
   private String photo;
   
-  //@Column(nullable=true)
-  //private boolean actif;
+  @Column(nullable=false)
+  private boolean actif;
   
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name="creation_date",nullable=true)

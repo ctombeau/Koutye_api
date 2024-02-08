@@ -27,4 +27,5 @@ public interface UtilisateurService {
 	public void setPassword(String password, String email);
 	public boolean verifyEmail(String email);
 	public void updateProfilePicture(String username, String path);
+	public UtilisateurDto firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword);
 }

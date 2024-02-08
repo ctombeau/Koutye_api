@@ -27,13 +27,10 @@ public class UserDetailServiceImpl implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		if(username == null || username.isEmpty())
+		if(username == null || username.isEmpty() || username.isBlank())
 			throw new InvalidInputException();
 	    Utilisateur utilisateur= utilisateurRepo.findUtilisateurByUsername(username);
-	                            //.orElseThrow(()-> new UsernameNotFoundException("user not found for username: "+username));
-		//String authorithy = new SimpleGrantedAuthority(utilisateur.getTypeUtilisateur()).toString();
-	    //utilisateur.getRoles().stream().map(u->u.getTypeUtilisateur());
-	    //utilisateur.getTypeUtilisateur();
+	                           
 	    UserDetails userDetails = User
 	    						.withUsername(utilisateur.getUsername())
 	    						.password(utilisateur.getPassword())

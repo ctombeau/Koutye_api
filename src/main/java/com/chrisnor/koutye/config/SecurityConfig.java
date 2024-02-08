@@ -70,6 +70,7 @@ public class SecurityConfig{
 				.sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.csrf(csrf->csrf.disable())
 				.authorizeRequests(ar->ar.requestMatchers("/api/login/**").permitAll())
+				.authorizeRequests(ar->ar.requestMatchers("/api/login-first/**").permitAll())
 				.authorizeRequests(ar->ar.requestMatchers("/api/user/add/**").permitAll())
 				.authorizeRequests(ar->ar.requestMatchers("/api/send-email/**").permitAll())
 				.authorizeRequests(ar->ar.anyRequest().authenticated())

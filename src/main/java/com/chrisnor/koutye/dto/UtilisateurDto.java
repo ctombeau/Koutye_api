@@ -58,6 +58,9 @@ public class UtilisateurDto {
 	  @Column(nullable=false)
 	  private String phone;
 	  
+	  @Column(nullable=false)
+	  private boolean actif;
+	  
 	  //@Basic(fetch = FetchType.LAZY)
 	  @Column(nullable=true)
 	  private String photo;
