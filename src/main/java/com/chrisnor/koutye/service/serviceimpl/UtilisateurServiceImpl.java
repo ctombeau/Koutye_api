@@ -320,6 +320,8 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		{
 			if(passwordEncoder.matches(oldPassword,utilDto.get().getPassword()))
 			{
+				try {
+				em.getTransaction().begin();
 				String newPasswordEncrypt = passwordEncoder.encode(newPassword);
 				Query q = em.createNativeQuery("update utilisateur set login_date=:ldate, password=:password, actif=:actif where email=:email");
 				q.setParameter("ldate", LocalDateTime.now());
@@ -327,7 +329,14 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 				q.setParameter("actif", true);
 				q.setParameter("email", email);
 				q.executeUpdate();
+				em.getTransaction().commit();
 				return utilDto.get();
+				}
+				catch(Exception e)
+				{
+				   em.getTransaction().rollback();
+				   return null;
+				}
 			}
 			else
 			{

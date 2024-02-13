@@ -31,7 +31,7 @@ public class UserDetailServiceImpl implements UserDetailsService{
 			throw new InvalidInputException();
 	    Utilisateur utilisateur= utilisateurRepo.findUtilisateurByUsername(username);
 	                           
-	    UserDetails userDetails = User
+	    UserDetails userDetails = User 
 	    						.withUsername(utilisateur.getUsername())
 	    						.password(utilisateur.getPassword())
 	    						.authorities(utilisateur.getTypeUtilisateur().getNomType())

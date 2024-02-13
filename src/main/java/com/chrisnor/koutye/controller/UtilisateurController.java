@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -68,6 +69,7 @@ import java.util.Map;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api")
+@EnableMethodSecurity(prePostEnabled=true)
 public class UtilisateurController {
 
 	@Value("${pathUser}")
@@ -121,7 +123,7 @@ public class UtilisateurController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(loginDto.getUsername(),authentication));
 		}
 		else
-			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username et/ou password incorrect"));
+			return responseGenerator.ErrorResponse(HttpStatus.UNAUTHORIZED, "username et/ou password incorrect");
 		
 	}
 	
@@ -130,7 +132,8 @@ public class UtilisateurController {
 	{
 		UtilisateurDto utilDto = utilService
 				               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
-		System.out.println("Username: "+utilDto.getUsername());
+		System.out.println("Username: "+utilDto);
+		
 		if(utilDto != null)
 		{
 			System.out.println("Tu n'es pas nul");
@@ -138,12 +141,19 @@ public class UtilisateurController {
 					 new UsernamePasswordAuthenticationToken(utilDto.getUsername(),loginDto.getNewPassword())
 					);
 			System.out.println(authentication.getPrincipal());
-			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(utilDto.getUsername(),authentication));
+			if(authentication.isAuthenticated() && utilDto.isActif()==true)
+			    return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(utilDto.getUsername(),authentication));
+			else
+				return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Nous n'arrivons pas a vous authentifier");
 		}
 		else
-			return responseGenerator.SuccessResponse(HttpStatus.UNAUTHORIZED,Map.of("message", "username et/ou password incorrect"));
+		{
+			System.out.println("on debogue....");
+			return responseGenerator.ErrorResponse(HttpStatus.UNAUTHORIZED,"Les informations fournies sont incorrectes");
+	
+		}
+		
 	}
-
 	@GetMapping("/user")
 	public ResponseEntity<Response> ShowUser(@RequestParam String username) {
 		// System.out.println(username);
