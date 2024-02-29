@@ -163,14 +163,11 @@ public class UtilisateurController {
 		Optional<UtilisateurDto> utilDto = utilService.getUtilisateur(username);
 
 		if (utilDto != null) {
-			Response res = new Response();
-			res.setObject(utilDto);
-			res.setMessage("Utilisateur trouve.");
-			return new ResponseEntity<>(res, HttpStatus.OK);
+	
+			return responseGenerator.SuccessResponse(HttpStatus.FOUND, utilDto);
 		} else {
-			Response res = new Response();
-			res.setMessage("Utilisateur non trouve.");
-			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+			
+			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Utilisateur non trouve");
 		}
 	}
 
