@@ -14,7 +14,7 @@ import com.chrisnor.koutye.model.Utilisateur;
 public interface UtilisateurService {
 	public UtilisateurDto PostUtilisateur(UtilisateurDto utilisateurDto);
 	public UtilisateurDto PutUtilisateur(Long id,UtilisateurDto utilDto);
-	//public Page<Utilisateur> getAllUtilisateurs(int pageNo, int pageSize);
+	public Page<Utilisateur> getAllUtilisateurs(int pageNo, int pageSize);
 	public List<UtilisateurDto> getUtilisateurs();
 	public Optional<UtilisateurDto> getUtilisateur(String username);
 	public Optional<UtilisateurDto> getUtilisateurByEmail(String email);

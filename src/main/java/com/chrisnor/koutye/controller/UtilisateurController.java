@@ -117,7 +117,7 @@ public class UtilisateurController {
 				);
 		Optional<UtilisateurDto> util = utilService.getUtilisateur(loginDto.getUsername());
 		
-		if(authentication.isAuthenticated() && util.get().isActif()==true)
+		if(authentication.isAuthenticated() && util.get().isActif()==true)	
 		{
 			utilService.Login(loginDto.getUsername(), loginDto.getPassword());
 			return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(loginDto.getUsername(),authentication));
@@ -130,13 +130,16 @@ public class UtilisateurController {
 	@PostMapping("/login-first")
 	public ResponseEntity<Response> FirstLogin(@RequestBody LoginForgetPasswordDto loginDto)
 	{
-		UtilisateurDto utilDto = utilService
+		  UtilisateurDto utilDto=utilService
 				               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
-		System.out.println("Username: "+utilDto);
 		
+		//Optional<UtilisateurDto> utilDto = utilService.getUtilisateurByEmail(loginDto.getEmail());
+		System.out.println("Username: "+utilDto);
 		if(utilDto != null)
 		{
+			
 			System.out.println("Tu n'es pas nul");
+			
 			Authentication authentication = authenticationManager.authenticate(
 					 new UsernamePasswordAuthenticationToken(utilDto.getUsername(),loginDto.getNewPassword())
 					);
@@ -200,17 +203,26 @@ public class UtilisateurController {
 		}
 	}
    
-	/*
+	
 	@GetMapping("/users-page")
 	//@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")
-	public ResponseEntity<Response> ListUtilisateurs(@RequestParam int pageNo, @RequestParam int pageSize) {
-		Page<Utilisateur> utilisateurs = utilService.getAllUtilisateurs(pageNo,pageSize);
-		if(utilisateurs.isEmpty())
-		   return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
-		else
-			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
+	public ResponseEntity<Response> ListUtilisateurs(@RequestParam(defaultValue="0") int pageNo,
+			@RequestParam(defaultValue="3") int pageSize) {
+		try
+		{
+			Page<Utilisateur> utilisateurs = utilService.getAllUtilisateurs(pageNo,pageSize);
+		
+			if(utilisateurs.isEmpty())
+		       return responseGenerator.SuccessResponse(HttpStatus.NO_CONTENT, utilisateurs);
+		   else
+			 return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
+		}
+		catch(Exception e)
+		{
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
-	*/
+	
 	
 	@GetMapping("/users")
 	//@PreAuthorize("hasAuthority('SCOPE_BackAdmin')")

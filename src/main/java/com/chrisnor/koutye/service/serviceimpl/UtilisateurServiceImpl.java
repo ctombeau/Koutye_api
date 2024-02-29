@@ -4,10 +4,12 @@ package com.chrisnor.koutye.service.serviceimpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.SecureRandom;
+import java.sql.ResultSet;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,9 +35,11 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import com.chrisnor.koutye.dto.UtilisateurDto;
 import com.chrisnor.koutye.exception.InvalidInputException;
+import com.chrisnor.koutye.exception.SqlInsertException;
 import com.chrisnor.koutye.model.TypeUtilisateur;
 import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.repository.TypeUtilisateurRepository;
@@ -44,13 +48,16 @@ import com.chrisnor.koutye.service.UtilisateurService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Service
-@Transactional
+@PersistenceContext
+@Transactional 
 public class UtilisateurServiceImpl implements UtilisateurService{
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -137,7 +144,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	}
 
 	@Override
-	//@Transactional
 	public void Login(String username, String password) {
 		Utilisateur utilisateur = new Utilisateur();
 		utilisateur = utilisateurRepo.findUtilisateurByUsername(username);
@@ -153,17 +159,18 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		
 	}
 
-	/*
+	
 	@Override
 	public Page<Utilisateur> getAllUtilisateurs(int pageNo, int pageSize) {
+		
 		Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Utilisateur> utilisateurs = utilisateurRepo.findAll(paging);
-        		                         
+        	                         
          return utilisateurs;
-
+       
 	}
-	*/
-	/*
+	
+	
 	@Override
 	public List<UtilisateurDto> getUtilisateurs() {
 		List<Utilisateur> utilisateurs = utilisateurRepo.findAll();
@@ -172,47 +179,44 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 				            .map(utilisateur-> modelMapper.map(utilisateur, UtilisateurDto.class))
 							.collect(Collectors.toList());
 	}
-	*/
+	
 
 	@Override
 	public UtilisateurDto PostUtilisateur( UtilisateurDto utilDto) {
 		Utilisateur util = new Utilisateur();
 		TypeUtilisateur typeUtil = new TypeUtilisateur();
+		
         try
         {
+		    
         	typeUtil = typeUtilRepo.findByNomType(utilDto.getNomType());
-			String nom= utilDto.getNom();
-			String prenom = utilDto.getPrenom();
-			String email = utilDto.getEmail();
-			String username = utilDto.getUsername();
-			String password = passwordEncoder.encode(utilDto.getPassword());
-			String phone = utilDto.getPhone();
-			String photo = utilDto.getPhoto(); //picture;
-			LocalDateTime creation_date = LocalDateTime.now();
-			Long idType = typeUtil.getIdType();
+        	Utilisateur utilisateur =util.builder()
+        								 .nom(utilDto.getNom())
+        								 .prenom(utilDto.getPrenom())
+        								 .username(utilDto.getUsername())
+        								 .email(utilDto.getEmail())
+        								 .password(utilDto.getPassword())
+        								 .photo("")
+        								 .phone(utilDto.getPhone())
+        								 .actif(true)
+        								 .typeUtilisateur(typeUtil)
+        								 .creationDate(LocalDateTime.now())
+        								 .build();
+        	
+        	if(typeUtil != null)
+        	{
+        		utilisateurRepo.save(utilisateur);
+        		return modelMapper.map(utilisateur, UtilisateurDto.class);
+        	}
+        	
+        	return null;
 			
-			System.out.println(nom + " "+prenom + " "+ email + " "+ username + " "+ password+ " "+phone +" "+creation_date+" "+idType);
-			
-			Query q = em.createNativeQuery("insert into utilisateur(nom,prenom,email,username,password,phone,photo,id_type,creation_date, actif)"
-					+ "values(?,?,?,?,?,?,?,?,?,?)",UtilisateurDto.class);
-			q.setParameter(1, nom.toUpperCase());
-			q.setParameter(2, prenom);
-			q.setParameter(3, email);
-			q.setParameter(4, username);
-			q.setParameter(5, password);
-			q.setParameter(6, phone);
-			q.setParameter(7, photo);
-			q.setParameter(8, idType);
-			q.setParameter(9, creation_date);
-			q.setParameter(10, true);
-			
-			q.executeUpdate();
-			return utilDto;
         }
         catch(Exception e)
         {
-        	System.out.println(e.getMessage());
-        	return null;
+        	throw new SqlInsertException();
+        	//System.out.println(e.getMessage());
+        	//return null;
         }
 			
 	}
@@ -228,6 +232,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	@Override
 	public Map<String, String> GenerateToken(String username, Authentication authentication) {
 		Instant instant = Instant.now();
+		
 		String scope = authentication.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.joining(" "));
 		JwtClaimsSet jwtClaimsSet = JwtClaimsSet
 									.builder()
@@ -296,13 +301,13 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		else
 		  return false;
 	}
-
+    /*
 	@Override
 	public List<UtilisateurDto> getUtilisateurs() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+    */
 	@Override
 	public void updateProfilePicture(String username, String path) {
 		Query q = em.createNativeQuery("update utilisateur set photo=:photo,modification_date=:mdate where username=:username");
@@ -320,34 +325,22 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		{
 			if(passwordEncoder.matches(oldPassword,utilDto.get().getPassword()))
 			{
-				try {
-				em.getTransaction().begin();
 				String newPasswordEncrypt = passwordEncoder.encode(newPassword);
-				Query q = em.createNativeQuery("update utilisateur set login_date=:ldate, password=:password, actif=:actif where email=:email");
-				q.setParameter("ldate", LocalDateTime.now());
-				q.setParameter("password", newPasswordEncrypt);
-				q.setParameter("actif", true);
-				q.setParameter("email", email);
-				q.executeUpdate();
-				em.getTransaction().commit();
-				return utilDto.get();
-				}
-				catch(Exception e)
-				{
-				   em.getTransaction().rollback();
-				   return null;
-				}
-			}
-			else
-			{
-				System.out.println("Optional n'est pas present");
-				return null;
-			}
+			    utilisateurRepo.firstLoginAfterForgetPassword(email, newPasswordEncrypt, LocalDateTime.now(), true);
 				
+			    Optional<UtilisateurDto> utilDtoActif = this.getUtilisateurByEmail(email);
+			    System.out.println("encoder: "+utilDtoActif.get());
+				if(utilDtoActif.get().isActif() == true)
+				{
+					return utilDtoActif.get();
+				}
+				else
+					return null;
+			}
+			else 
+				return null;
 		}
 		else
 			return null;
-		
-	}
-   
-}
+  }
+}  

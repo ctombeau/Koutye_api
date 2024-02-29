@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Basic;
@@ -30,6 +32,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +40,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor 
 @AllArgsConstructor
 @Entity
+@Builder
 public class Utilisateur implements Serializable{
 	
   /**
@@ -93,12 +97,14 @@ public class Utilisateur implements Serializable{
   @Column(name="logout_date",nullable=true)
   private LocalDateTime logoutDate;
   
-  //@JsonManagedReference
+  
+  @JsonIgnore
   @ManyToOne(cascade=CascadeType.ALL)
   @JoinColumn(name="id_type")
   private TypeUtilisateur typeUtilisateur;
   
-  //@JsonManagedReference
+  
+  @JsonIgnore
   @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY, cascade = CascadeType.PERSIST)
   private List<Appartement> appartements;
   
