@@ -48,6 +48,7 @@ import com.chrisnor.koutye.dto.LoginDto;
 import com.chrisnor.koutye.dto.LoginForgetPasswordDto;
 import com.chrisnor.koutye.dto.UtilisateurDto;
 import com.chrisnor.koutye.dto.UtilisateurFileDto;
+import com.chrisnor.koutye.exception.FileNotFoundException;
 import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Utilisateur;
 import com.chrisnor.koutye.repository.UtilisateurRepository;
@@ -248,7 +249,7 @@ public class UtilisateurController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
 		}
 		else
-			return responseGenerator.SuccessResponse(HttpStatus.NOT_FOUND, "Aucun email ne correspond...");
+			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Aucun email ne correspond...");
 	}
 	
 	@GetMapping("/default-password")
@@ -262,13 +263,13 @@ public class UtilisateurController {
 	{
 		String retour;
 		retour = new FileUpload().UploadFiles(photo, userFolder + username);
-		if (retour != null)
+		if (retour != null && !retour.equals(""))
 		{
 			retour = retour.replace("\\", "/");
 			utilService.updateProfilePicture(username,retour );
 			return responseGenerator.SuccessResponse(HttpStatus.CREATED, retour);
 		}
 		else
-			return responseGenerator.SuccessResponse(HttpStatus.NOT_MODIFIED, null);
+			throw new FileNotFoundException();
 	}
 }

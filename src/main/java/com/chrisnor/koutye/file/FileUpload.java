@@ -7,7 +7,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
@@ -32,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.chrisnor.koutye.exception.FileNotFoundException;
+
 
 public class FileUpload {
 	
@@ -47,16 +48,16 @@ public class FileUpload {
 			Path filePath = uploadPath.resolve(FileName);
 			Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
-			throw new IOException("Ne peut pas enregistrer le fichier "+ FileName,e);
+			throw new FileNotFoundException();
 		}
 	
 	}
 	
 	
 	public String UploadFiles(MultipartFile multipartFile, String directory)
-			throws IOException {
+			throws FileNotFoundException {
          Path filePath=null;
          
         try (InputStream inputStream = multipartFile.getInputStream()) {
@@ -67,29 +68,35 @@ public class FileUpload {
               return filePath.toString();
         	}
         	else
-        		return null;
+        		throw new FileNotFoundException();
         } catch (IOException ioe) {       
-            throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
+            //throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
+        	throw new FileNotFoundException();
         }
          
         
 	}
 	
 	public static InputStream DownloadFiles(String path) throws IOException
-	{
-		Path filePath = Paths.get(path);
-		String fileName = filePath.getFileName().toString();
-		File file = new File(path);
-		
-		Path destination = Paths.get("C:/Koutye_Folder/Destination/");
-		
-		if(!Files.exists(filePath))
+	{ 
+		if(!path.equals(""))
 		{
-			throw new FileNotFoundException("Le fichier "+fileName + " non trouve sur le serveur");
+			Path filePath = Paths.get(path);
+			String fileName = filePath.getFileName().toString();
+			File file = new File(path);
+			
+			Path destination = Paths.get("C:/Koutye_Folder/Destination/");
+			
+			if(!Files.exists(filePath))
+			{
+				throw new FileNotFoundException();
+			}
+			InputStream resource = new FileInputStream(path);
+			Files.copy(resource, destination, StandardCopyOption.REPLACE_EXISTING);
+		    return resource;
 		}
-		InputStream resource = new FileInputStream(path);
-		Files.copy(resource, destination, StandardCopyOption.REPLACE_EXISTING);
-	    return resource;
+		else
+			throw new FileNotFoundException();
 	}
 
 }

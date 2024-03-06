@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -53,24 +54,30 @@ public class Utilisateur implements Serializable{
   private Long utilisateurId;
   
   @Column(nullable=false)
+  @NotEmpty
   private String nom;
   
   @Column(nullable=false)
+  @NotEmpty
   private String prenom;
   
   
   @Column(unique=true, nullable=false)
+  @NotEmpty
   private String username;
   
   
   @Column(unique=true, nullable=false)
   @Email(message="veuillez fournir un email correct")
+  @NotEmpty
   private String email;
   
   @Column(nullable=false)
+  @NotEmpty
   private String password;
   
   @Column(nullable=false)
+  @NotEmpty
   private String phone;
   
   @Column(nullable=true, length=64)

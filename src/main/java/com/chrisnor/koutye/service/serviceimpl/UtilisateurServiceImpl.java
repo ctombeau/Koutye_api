@@ -195,7 +195,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
         								 .prenom(utilDto.getPrenom())
         								 .username(utilDto.getUsername())
         								 .email(utilDto.getEmail())
-        								 .password(utilDto.getPassword())
+        								 .password(passwordEncoder.encode(utilDto.getPassword()))
         								 .photo("")
         								 .phone(utilDto.getPhone())
         								 .actif(true)
@@ -215,8 +215,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
         catch(Exception e)
         {
         	throw new SqlInsertException();
-        	//System.out.println(e.getMessage());
-        	//return null;
         }
 			
 	}
@@ -312,9 +310,9 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	public void updateProfilePicture(String username, String path) {
 		Query q = em.createNativeQuery("update utilisateur set photo=:photo,modification_date=:mdate where username=:username");
 		q.setParameter("photo", path)
-					 .setParameter("mdate", LocalDateTime.now())
-		             .setParameter("username", username)
-		             .executeUpdate();
+		 .setParameter("mdate", LocalDateTime.now())
+		 .setParameter("username", username)
+		 .executeUpdate();
 		
 	}
 
