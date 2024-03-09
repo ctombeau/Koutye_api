@@ -173,32 +173,38 @@ public class UtilisateurController {
 	}
 
 	@PutMapping("/user/update/{id}")
-	public ResponseEntity<Response> UpdateUser(@PathVariable Long id, @RequestParam MultipartFile photo,
-			@RequestParam String model) {
-		String retour;
+	public ResponseEntity<Response> UpdateUser(@PathVariable Long id, @RequestBody UtilisateurDto utilDto) {
 		UtilisateurDto util = new UtilisateurDto();
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			UtilisateurDto utilDto = mapper.readValue(model, UtilisateurDto.class);
-			retour = new FileUpload().UploadFiles(photo, userFolder + utilDto.getUsername());
-			if (retour != null)
-				utilDto.setPhoto(retour.replace("\\", "/"));
-
+		Utilisateur utilBase = new Utilisateur();
+		
+		utilBase = utilisateurRepo.getById(id);
+		
+		System.out.println(utilBase.getUsername());
+		System.out.println(utilBase.getEmail());
+		System.out.println(utilDto.getUsername());
+		System.out.println(utilDto.getEmail());
+		
+		if(utilBase.getEmail().equals(utilDto.getEmail()) && utilBase.getUsername().equalsIgnoreCase(utilDto.getUsername()))
+		{
 			util = utilService.PutUtilisateur(id, utilDto);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			return responseGenerator.SuccessResponse(HttpStatus.OK, util);
 		}
-
-		if (util != null) {
-			Response res = new Response();
-			res.setObject(util);
-			res.setMessage("Utilisateur modifié avec succès");
-			return new ResponseEntity<>(res, HttpStatus.CREATED);
-		} else {
-			Response res = new Response();
-			res.setMessage("Erreur lors de la mofification de l'utilisateur");
-			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+		else
+		{
+			
+			if(utilService.getUtilisateur(utilDto.getUsername()) != null || utilService.getUtilisateurByEmail(utilDto.getEmail()) != null)
+			{
+				return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la mofification de l'utilisateur");
+			}
+			else
+			{
+				util = utilService.PutUtilisateur(id, utilDto);
+				return responseGenerator.SuccessResponse(HttpStatus.OK, util);
+			}
+			
 		}
+		
+		
 	}
    
 	
@@ -259,7 +265,7 @@ public class UtilisateurController {
 	}
 	
 	@PostMapping("/update-picture")
-	public ResponseEntity<?> setProfilePicture(@RequestParam String username, @RequestParam MultipartFile photo) throws IOException
+	public ResponseEntity<?> setProfilePicture(@RequestParam String username, @RequestParam MultipartFile photo) throws FileNotFoundException
 	{
 		String retour;
 		retour = new FileUpload().UploadFiles(photo, userFolder + username);
