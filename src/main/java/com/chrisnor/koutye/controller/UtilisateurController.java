@@ -158,6 +158,7 @@ public class UtilisateurController {
 		}
 		
 	}
+	
 	@GetMapping("/user")
 	public ResponseEntity<Response> ShowUser(@RequestParam String username) {
 		// System.out.println(username);

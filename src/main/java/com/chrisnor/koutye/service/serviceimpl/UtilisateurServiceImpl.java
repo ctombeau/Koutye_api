@@ -302,7 +302,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	@Override
 	public boolean verifyEmail(String email) {
 		Optional<UtilisateurDto> util = this.getUtilisateurByEmail(email);
-		if(util.get() != null)
+		if(util != null)
 		{
 			return true;
 		}
