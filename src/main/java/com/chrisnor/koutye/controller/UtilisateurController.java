@@ -179,11 +179,6 @@ public class UtilisateurController {
 		
 		utilBase = utilisateurRepo.getById(id);
 		
-		System.out.println(utilBase.getUsername());
-		System.out.println(utilBase.getEmail());
-		System.out.println(utilDto.getUsername());
-		System.out.println(utilDto.getEmail());
-		
 		if(utilBase.getEmail().equals(utilDto.getEmail()) && utilBase.getUsername().equalsIgnoreCase(utilDto.getUsername()))
 		{
 			util = utilService.PutUtilisateur(id, utilDto);
@@ -238,13 +233,11 @@ public class UtilisateurController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK, utilisateurs);
 	}
 	
-	@GetMapping("/send-email")
+	@GetMapping("/send-email") 
 	public ResponseEntity<Response> getEmail(@RequestParam String emailTo) throws MessagingException
 	{
 		String subject = "Changement de mot de passe.";
 		UtilisateurDto util = new UtilisateurDto();
-		//Context thymeleafContext = new Context();
-		 
 		
 		if(utilService.verifyEmail(emailTo))
 		{
