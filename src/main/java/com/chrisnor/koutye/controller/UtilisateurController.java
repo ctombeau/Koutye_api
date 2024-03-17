@@ -134,7 +134,6 @@ public class UtilisateurController {
 		  UtilisateurDto utilDto=utilService
 				               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
 		
-		//Optional<UtilisateurDto> utilDto = utilService.getUtilisateurByEmail(loginDto.getEmail());
 		System.out.println("Username: "+utilDto);
 		if(utilDto != null)
 		{

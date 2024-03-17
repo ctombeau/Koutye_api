@@ -48,6 +48,7 @@ import com.chrisnor.koutye.service.UtilisateurService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -328,6 +329,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public UtilisateurDto firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword) {
+		//em.setFlushMode(FlushModeType.COMMIT);
 		Optional<UtilisateurDto> utilDto = getUtilisateurByEmail(email);
 		if(utilDto.isPresent())
 		{
@@ -335,10 +337,11 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			{
 				String newPasswordEncrypt = passwordEncoder.encode(newPassword);
 			    utilisateurRepo.firstLoginAfterForgetPassword(email, newPasswordEncrypt, LocalDateTime.now(), true);
-				
-			    Optional<UtilisateurDto> utilDtoActif = this.getUtilisateurByEmail(email);
-			    System.out.println("encoder: "+utilDtoActif.get());
-				if(utilDtoActif.get().isActif() == true)
+			    
+			    Optional<UtilisateurDto> utilDtoActif = getUtilisateurByEmail(email);
+			    System.out.println("est actif: "+utilDtoActif.get().isActif());
+			    
+				if(utilDtoActif.get().isActif())
 				{
 					return utilDtoActif.get();
 				}
