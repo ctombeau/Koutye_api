@@ -329,7 +329,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	@Override
 	public boolean firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword) {
-		//em.setFlushMode(FlushModeType.COMMIT);
+		
 		Optional<UtilisateurDto> utilDto = getUtilisateurByEmail(email);
 		if(utilDto.isPresent())
 		{
@@ -341,18 +341,6 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			    	return true;
 			    else
 			    	return false;
-			    
-			    /*
-			    Optional<UtilisateurDto> utilDtoActif = getUtilisateurByEmail(email);
-			    System.out.println("est actif: "+utilDtoActif.get().isActif());
-			    
-				if(utilDtoActif.get().isActif())
-				{
-					return utilDtoActif.get();
-				}
-				else
-					return null;
-				*/
 			}
 			else 
 				return false;

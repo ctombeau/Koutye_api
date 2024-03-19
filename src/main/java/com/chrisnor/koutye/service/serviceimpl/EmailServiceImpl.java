@@ -82,5 +82,15 @@ public class EmailServiceImpl implements EmailService{
 		   String htmlBody = templateEngine.process("email", thymeleafContext);
 		   sendHtmlMessage(emailTo, subject, htmlBody);	
 	}
+
+	@Override
+	public void sendMessageUsingThymeleafTemplateAttach(String emailTo, String subject,
+			Map<String, Object> templateModel) throws MessagingException {
+			   Context thymeleafContext = new Context();
+			   thymeleafContext.setVariables(templateModel);
+			   String htmlBody = templateEngine.process("attachementMail", thymeleafContext);
+			   sendHtmlMessage(emailTo, subject, htmlBody);	
+		
+	}
 	
 }

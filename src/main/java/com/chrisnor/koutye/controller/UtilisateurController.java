@@ -127,37 +127,7 @@ public class UtilisateurController {
 			return responseGenerator.ErrorResponse(HttpStatus.UNAUTHORIZED, "username et/ou password incorrect");
 		
 	}
-	/*
-	@PostMapping("/login-first")
-	public ResponseEntity<Response> FirstLogin(@RequestBody LoginForgetPasswordDto loginDto)
-	{
-		  UtilisateurDto utilDto=utilService
-				               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
-		
-		System.out.println("Username: "+utilDto);
-		if(utilDto != null)
-		{
-			
-			System.out.println("Tu n'es pas nul");
-			
-			Authentication authentication = authenticationManager.authenticate(
-					 new UsernamePasswordAuthenticationToken(utilDto.getUsername(),loginDto.getNewPassword())
-					);
-			System.out.println(authentication.getPrincipal());
-			if(authentication.isAuthenticated() && utilDto.isActif()==true)
-			    return responseGenerator.SuccessResponse(HttpStatus.OK,utilService.GenerateToken(utilDto.getUsername(),authentication));
-			else
-				return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Nous n'arrivons pas a vous authentifier");
-		}
-		else
-		{
-			System.out.println("on debogue....");
-			return responseGenerator.ErrorResponse(HttpStatus.UNAUTHORIZED,"Les informations fournies sont incorrectes");
 	
-		}
-		
-	}
-	*/
 	@PostMapping("/reset-password")
 	public ResponseEntity<Response> resetPassword(@RequestBody LoginForgetPasswordDto loginDto)
 	{
@@ -256,6 +226,25 @@ public class UtilisateurController {
 			 util = utilService.getUtilisateurByEmail(emailTo).get();
 			 utilService.setPassword(defaultPassword, emailTo);
 			 emailService.sendMessageUsingThymeleafTemplate(emailTo, subject, IdentityUserEmail.getIdentityUserEmailPassword(util,defaultPassword));
+			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
+		}
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Aucun email ne correspond...");
+	}
+	
+	@GetMapping("/send-email-attachment") 
+	public ResponseEntity<Response> getEmailAttachment(@RequestParam String emailFrom, @RequestParam String emailTo) throws MessagingException
+	{
+		String subject = "Demande d'Autorisation Courtier.";
+		UtilisateurDto utilFrom = new UtilisateurDto();
+		UtilisateurDto utilTo = new UtilisateurDto();
+		
+		if(utilService.verifyEmail(emailTo))
+		{
+			utilFrom = utilService.getUtilisateurByEmail(emailFrom).get();
+			 utilTo = utilService.getUtilisateurByEmail(emailTo).get();
+			 
+			 emailService.sendMessageUsingThymeleafTemplateAttach(emailTo, subject, IdentityUserEmail.getIdentityUserEmailAttach(utilFrom, utilTo));
 			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
 		}
 		else

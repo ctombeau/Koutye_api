@@ -29,4 +29,18 @@ public class IdentityUserEmail {
 		obj.put("copyRightDate", String.valueOf(LocalDate.now().getYear()));
 		return obj;
 	}
+	
+	public static Map<String, Object> getIdentityUserEmailAttach(UtilisateurDto userPro, UtilisateurDto userCour) {
+		Map<String, Object> obj = new HashMap<String, Object>();
+		obj.put("nomProprietaire", userPro.getNom());
+		obj.put("prenomProprietaire", userPro.getPrenom());
+		obj.put("usernameProprietaire", userPro.getUsername());
+		
+		obj.put("nomCourtier", userCour.getNom());
+		obj.put("prenomCourtier", userCour.getPrenom());
+		obj.put("usernameCourtier", userCour.getUsername());
+	
+		obj.put("copyRightDate", String.valueOf(LocalDate.now().getYear()));
+		return obj;
+	}
 }
