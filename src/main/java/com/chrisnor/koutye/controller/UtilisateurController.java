@@ -127,7 +127,7 @@ public class UtilisateurController {
 			return responseGenerator.ErrorResponse(HttpStatus.UNAUTHORIZED, "username et/ou password incorrect");
 		
 	}
-	
+	/*
 	@PostMapping("/login-first")
 	public ResponseEntity<Response> FirstLogin(@RequestBody LoginForgetPasswordDto loginDto)
 	{
@@ -156,6 +156,17 @@ public class UtilisateurController {
 	
 		}
 		
+	}
+	*/
+	@PostMapping("/reset-password")
+	public ResponseEntity<Response> resetPassword(@RequestBody LoginForgetPasswordDto loginDto)
+	{
+		boolean result = utilService
+	               .firstLoginAfterForgetPassword(loginDto.getEmail(),loginDto.getOldPassword(),loginDto.getNewPassword());
+		if(result == true)
+			return responseGenerator.SuccessResponse(HttpStatus.OK, null);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "utilisateur non modifie");
 	}
 	
 	@GetMapping("/user")

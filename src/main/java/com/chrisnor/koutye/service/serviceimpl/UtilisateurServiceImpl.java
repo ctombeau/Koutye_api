@@ -328,7 +328,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	}
 
 	@Override
-	public UtilisateurDto firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword) {
+	public boolean firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword) {
 		//em.setFlushMode(FlushModeType.COMMIT);
 		Optional<UtilisateurDto> utilDto = getUtilisateurByEmail(email);
 		if(utilDto.isPresent())
@@ -336,8 +336,13 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			if(passwordEncoder.matches(oldPassword,utilDto.get().getPassword()))
 			{
 				String newPasswordEncrypt = passwordEncoder.encode(newPassword);
-			    utilisateurRepo.firstLoginAfterForgetPassword(email, newPasswordEncrypt, LocalDateTime.now(), true);
+			    int result = utilisateurRepo.firstLoginAfterForgetPassword(email, newPasswordEncrypt, LocalDateTime.now(), true);
+			    if(result>0)
+			    	return true;
+			    else
+			    	return false;
 			    
+			    /*
 			    Optional<UtilisateurDto> utilDtoActif = getUtilisateurByEmail(email);
 			    System.out.println("est actif: "+utilDtoActif.get().isActif());
 			    
@@ -347,11 +352,12 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 				}
 				else
 					return null;
+				*/
 			}
 			else 
-				return null;
+				return false;
 		}
 		else
-			return null;
+			return false;
   }
 }  

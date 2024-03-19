@@ -31,7 +31,7 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur,Long>{
 	
 	@Modifying
 	@Query("update Utilisateur u set u.loginDate = :login_date, u.password=:password, u.actif=:actif where u.email = :email")
-	public void firstLoginAfterForgetPassword(@Param("email") String email,@Param("password") String password, @Param("login_date") LocalDateTime login_date, @Param("actif") boolean actif);
+	public int firstLoginAfterForgetPassword(@Param("email") String email,@Param("password") String password, @Param("login_date") LocalDateTime login_date, @Param("actif") boolean actif);
  
 	@Query(value="SELECT u,r.nomType FROM Utilisateur u left join u.typeUtilisateur r")
     public Page<Utilisateur> findByType(Pageable paging);
