@@ -22,10 +22,11 @@ public interface UtilisateurService {
 	//public Optional<UtilisateurDto> getUtilisateurByUsernameExceptUserId();
 	public void Login(String username, String password);
 	public long FindIdTypeByNomType(String nomType);
-	public Map<String, String> GenerateToken(String username, Authentication authentication);
+	public Map<String, Object> GenerateToken(String username, Authentication authentication);
 	public String generateDefaultPassword();
 	public void setPassword(String password, String email);
 	public boolean verifyEmail(String email);
 	public void updateProfilePicture(String username, String path);
 	public boolean firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword);
+	public boolean postAttachUsers(String usernamePro, String usernameCour);
 }

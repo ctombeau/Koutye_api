@@ -117,6 +117,7 @@ public class UtilisateurController {
 				 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
 				);
 		Optional<UtilisateurDto> util = utilService.getUtilisateur(loginDto.getUsername());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		if(authentication.isAuthenticated() && util.get().isActif()==true)	
 		{
@@ -146,7 +147,7 @@ public class UtilisateurController {
 
 		if (utilDto != null) {
 	
-			return responseGenerator.SuccessResponse(HttpStatus.FOUND, utilDto);
+			return responseGenerator.SuccessResponse(HttpStatus.OK, utilDto);
 		} else {
 			
 			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Utilisateur non trouve");
@@ -239,13 +240,19 @@ public class UtilisateurController {
 		UtilisateurDto utilFrom = new UtilisateurDto();
 		UtilisateurDto utilTo = new UtilisateurDto();
 		
-		if(utilService.verifyEmail(emailTo))
+		if(utilService.verifyEmail(emailTo) && utilService.verifyEmail(emailFrom))
 		{
-			utilFrom = utilService.getUtilisateurByEmail(emailFrom).get();
+			 utilFrom = utilService.getUtilisateurByEmail(emailFrom).get();
 			 utilTo = utilService.getUtilisateurByEmail(emailTo).get();
 			 
-			 emailService.sendMessageUsingThymeleafTemplateAttach(emailTo, subject, IdentityUserEmail.getIdentityUserEmailAttach(utilFrom, utilTo));
-			return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
+			 if(utilFrom.getNomType().equals("Proprietaire") && utilTo.getNomType().equals("Courtier"))
+			 {
+			   emailService.sendMessageUsingThymeleafTemplateAttach(emailTo, subject, IdentityUserEmail.getIdentityUserEmailAttach(utilFrom, utilTo));
+			   return responseGenerator.SuccessResponse(HttpStatus.OK, "Mail envoyé avec succès...");
+		
+			 }
+			 else
+				 return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "L'un d'entre vous n'a pas le droit...");
 		}
 		else
 			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Aucun email ne correspond...");
@@ -270,5 +277,15 @@ public class UtilisateurController {
 		}
 		else
 			throw new FileNotFoundException();
+	}
+	
+	@PostMapping("/attach-user")
+	public ResponseEntity<?> attachUsers(@RequestParam String usernamePro, @RequestParam String usernameCour)
+	{
+		boolean result = utilService.postAttachUsers(usernamePro, usernameCour);
+		if(result == true)
+			return responseGenerator.SuccessResponse(HttpStatus.OK, null);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attaches.");
 	}
 }

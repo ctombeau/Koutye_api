@@ -40,8 +40,10 @@ import org.springframework.transaction.annotation.Propagation;
 import com.chrisnor.koutye.dto.UtilisateurDto;
 import com.chrisnor.koutye.exception.InvalidInputException;
 import com.chrisnor.koutye.exception.SqlInsertException;
+import com.chrisnor.koutye.model.Attachement;
 import com.chrisnor.koutye.model.TypeUtilisateur;
 import com.chrisnor.koutye.model.Utilisateur;
+import com.chrisnor.koutye.repository.AttachementRepository;
 import com.chrisnor.koutye.repository.TypeUtilisateurRepository;
 import com.chrisnor.koutye.repository.UtilisateurRepository;
 import com.chrisnor.koutye.service.UtilisateurService;
@@ -77,6 +79,9 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 	
 	@Autowired
 	private JwtEncoder jwtEncoder;
+	
+	@Autowired
+	private AttachementRepository attachRepo;
 	
 	public UtilisateurDto setUpdate(Long id,UtilisateurDto utilDto)
 	{
@@ -239,7 +244,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 
 	
 	@Override
-	public Map<String, String> GenerateToken(String username, Authentication authentication) {
+	public Map<String, Object> GenerateToken(String username, Authentication authentication) {
 		Instant instant = Instant.now();
 		
 		String scope = authentication.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.joining(" "));
@@ -255,7 +260,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 									jwtClaimsSet
 								);
 		String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
-		return Map.of("access-token",jwt);
+		return Map.of("access-token",jwt,"user-info",this.getUtilisateur(username).get());
 	}
 
 	@Override
@@ -348,4 +353,21 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		else
 			return false;
   }
+
+	@Override
+	public boolean postAttachUsers(String usernamePro, String usernameCour) {
+
+		UtilisateurDto utilPro = this.getUtilisateur(usernamePro).get();
+		UtilisateurDto utilCour = this.getUtilisateur(usernameCour).get();
+		Attachement attach = new Attachement();
+		
+		if(utilPro != null && utilCour != null)
+		{
+			attach.setProprietaireId(utilPro.getUtilisateurId());
+			attach.setCourtierId(utilCour.getUtilisateurId());
+			attachRepo.save(attach);
+			return true;
+		}
+		return false;
+	}
 }  
