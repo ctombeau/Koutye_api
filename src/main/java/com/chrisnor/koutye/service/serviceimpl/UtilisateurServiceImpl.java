@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -369,5 +371,28 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<UtilisateurDto> getUserAttachment(String username) {
+		Optional<UtilisateurDto> utilDto = this.getUtilisateur(username);
+		List<UtilisateurDto> maListeDto = new ArrayList<UtilisateurDto>();
+		if(utilDto.get().getNomType().equals("Proprietaire"))
+		{
+			List<Long> ids = attachRepo.findIdCourtiersByIdProprietaire(utilDto.get().getUtilisateurId());
+			
+			List<Utilisateur> utils = utilisateurRepo.findAllById(ids);
+			System.out.println(ids);
+			 utils.stream().forEach(util->{
+				 UtilisateurDto utilisateurDto = modelMapper.map(util, UtilisateurDto.class);
+				 maListeDto.add(utilisateurDto);
+			 });
+			 return maListeDto;
+		}
+		else if(utilDto.get().getNomType().equals("Courtier"))
+		{
+			return Arrays.asList(utilDto.get()) ;
+		}
+		return null;
 	}
 }  

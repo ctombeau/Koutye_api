@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-@CrossOrigin("*")
+@CrossOrigin(origins="*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api")
 @EnableMethodSecurity(prePostEnabled=true)
@@ -282,9 +282,20 @@ public class UtilisateurController {
 	@PostMapping("/attach-user")
 	public ResponseEntity<?> attachUsers(@RequestParam String usernamePro, @RequestParam String usernameCour)
 	{
+		System.out.println("Test de submit via email");
 		boolean result = utilService.postAttachUsers(usernamePro, usernameCour);
 		if(result == true)
 			return responseGenerator.SuccessResponse(HttpStatus.OK, null);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attaches.");
+	}
+	
+	@GetMapping("/show-attach-users")
+	public ResponseEntity<?> showAttachUsers(@RequestParam String username)
+	{
+		List<UtilisateurDto> utilDto = utilService.getUserAttachment(username);
+		if(utilDto != null)
+			return responseGenerator.SuccessResponse(HttpStatus.OK, utilDto);
 		else
 			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attaches.");
 	}

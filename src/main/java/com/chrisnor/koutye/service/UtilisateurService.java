@@ -29,4 +29,5 @@ public interface UtilisateurService {
 	public void updateProfilePicture(String username, String path);
 	public boolean firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword);
 	public boolean postAttachUsers(String usernamePro, String usernameCour);
+	public List<UtilisateurDto> getUserAttachment(String username);
 }

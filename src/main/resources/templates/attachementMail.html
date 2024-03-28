@@ -28,8 +28,10 @@
     
 </p>
 
-<form method="post" action="#" th:action="@{/}">
-	<bouton type="submit"> Accepter </bouton>
+<form method="post" action="#" th:action="@{api/attach-user}" th:object="${utilisateur}">
+ <input  name="usernamePro" th:value="${usernameProprietaire}">
+ <input  name="usernameCour" th:value="${usernameCourtier}">
+	<button type="submit" class="btn btn-primary"> Accepter </button>
 </form>
 
 
