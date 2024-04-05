@@ -30,4 +30,5 @@ public interface UtilisateurService {
 	public boolean firstLoginAfterForgetPassword(String email, String oldPassword, String newPassword);
 	public boolean postAttachUsers(String usernamePro, String usernameCour);
 	public List<UtilisateurDto> getUserAttachment(String username);
+	public boolean getdetachUsers(String usernamePro, String usernameCour);
 }

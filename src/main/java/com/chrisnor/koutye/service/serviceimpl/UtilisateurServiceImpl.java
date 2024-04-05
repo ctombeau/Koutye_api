@@ -395,4 +395,23 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 		}
 		return null;
 	}
+
+	@Override
+	public boolean getdetachUsers(String usernamePro, String usernameCour) {
+		Optional<UtilisateurDto> utilDtoPro = this.getUtilisateur(usernamePro);
+		Optional<UtilisateurDto> utilDtoCour = this.getUtilisateur(usernameCour);
+		
+		if(utilDtoCour.get().getNomType().equals("Courtier") && utilDtoPro.get().getNomType().equals("Proprietaire"))
+		{
+			int result = attachRepo.deleteAttachUser(utilDtoPro.get().getUtilisateurId(), utilDtoCour.get().getUtilisateurId());
+			return result > 0 ?  true : false;
+			//System.out.println("result: "+result);
+//			if(result > 0)
+//				return true;
+//			else
+//				return false;
+		}
+		else
+		 return false;
+	}
 }  

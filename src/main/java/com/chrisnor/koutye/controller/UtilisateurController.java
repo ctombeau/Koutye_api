@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-@CrossOrigin(origins="*", allowedHeaders = "*")
+@CrossOrigin(origins="*")
 @RestController
 @RequestMapping("/api")
 @EnableMethodSecurity(prePostEnabled=true)
@@ -150,7 +150,7 @@ public class UtilisateurController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK, utilDto);
 		} else {
 			
-			return responseGenerator.ErrorResponse(HttpStatus.NOT_FOUND, "Utilisateur non trouve");
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Utilisateur non trouve");
 		}
 	}
 
@@ -285,9 +285,9 @@ public class UtilisateurController {
 		System.out.println("Test de submit via email");
 		boolean result = utilService.postAttachUsers(usernamePro, usernameCour);
 		if(result == true)
-			return responseGenerator.SuccessResponse(HttpStatus.OK, null);
+			return responseGenerator.SuccessResponse(HttpStatus.OK, "Utilisateurs attachés avec succès");
 		else
-			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attaches.");
+			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attachés.");
 	}
 	
 	@GetMapping("/show-attach-users")
@@ -298,5 +298,15 @@ public class UtilisateurController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK, utilDto);
 		else
 			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Les utilisateurs ne sont pas attaches.");
+	}
+	
+	@GetMapping("detach-users")
+	public ResponseEntity<?> detachUsers(@RequestParam String usernamePro, @RequestParam String usernameCour)
+	{
+		boolean result = utilService.getdetachUsers(usernamePro, usernameCour);
+		if(result == true)
+			return responseGenerator.SuccessResponse(HttpStatus.OK, "Utilisateurs detachés avec succès");
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.BAD_REQUEST, "Vous ne pouvez pas détacher ces utilisateurs..");
 	}
 }
