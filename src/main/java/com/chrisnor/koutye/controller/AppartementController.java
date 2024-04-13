@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.chrisnor.koutye.dto.AppartementDto;
 import com.chrisnor.koutye.model.Appartement;
+import com.chrisnor.koutye.repository.AppartementRepository;
 import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.AppartementService;
@@ -26,60 +27,25 @@ import lombok.AllArgsConstructor;
 public class AppartementController {
 	
 	private AppartementService appService;
+	private AppartementRepository appRepo;
 	private ResponseGenerator responseGenerator;
 	
-	@PostMapping("appartement/add")
+	@PostMapping("/appartement/add")
 	@PreAuthorize("hasAuthority('SCOPE_Proprietaire')")
 	@ResponseBody
-	public ResponseEntity<Response> AddAppartement(@RequestBody Appartement app)
+	public ResponseEntity<Response> AddAppartement(@RequestBody AppartementDto app)
 	{
-		/*
-		  {
-    "description":"Appartement de luxe avec 6 pieces",
-    "username": "ctombeau",
-    "adresse":{
-        "pays":"Haiti",
-        "departement":"Ouest",
-        "commune":"Delmas",
-        "rue":"Soeur Georges",
-        "numero": 13
-    },
-    "imageAppartements":[
-        {
-            "descriptionImage":"Chambre a coucher",
-            "image":""
-        },
-        {
-            "descriptionImage":"Cuisine",
-            "image":""
-        }
-    ],
-    
-    "videoAppartements":[
-        {
-            "descriptionVideo":"video de la cour",
-            "video":""
-        },
-        {
-            "descriptionVideo":"Chambre a coucher",
-            "video":""
-        }
-    ]
-}
-		 */
-		System.out.println("Appartement choisi: "+app);
-		/*
-		if(appartement != null)
+		
+		AppartementDto appDto = appService.addAppartement(app);
+		
+		if(appDto != null)
 		{
-			AppartementDto appDto=appService.PostAppartement(appartement);
-			return responseGenerator.SuccessResponse(H ttpStatus.CREATED,appDto);
+			return responseGenerator.SuccessResponse(HttpStatus.CREATED,appDto);
 		}
 		else
 		{
 			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "aucune donnee trouvee");
 		}
-		*/
-		return null;
 		
 	}
 }

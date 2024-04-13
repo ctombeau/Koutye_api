@@ -11,4 +11,7 @@ import com.chrisnor.koutye.model.Appartement;
 public interface AppartementService {
 	public AppartementDto PostAppartement(Appartement app);
 	public Optional<Appartement> getAppartementByMaxId(Long id);
+	public AppartementDto addAppartement(AppartementDto appDto);
+	public AppartementDto getAppartementByUsername(String username);
+	public AppartementDto getAppartementByCommune(String commune);
 }

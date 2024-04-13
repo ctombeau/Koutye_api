@@ -34,7 +34,7 @@ public class AppartementDto implements Serializable{
 	
 	private String description;
 	
-	private Utilisateur utilisateur;
+	private String username;
 	
 	private Adresse adresse;
 	

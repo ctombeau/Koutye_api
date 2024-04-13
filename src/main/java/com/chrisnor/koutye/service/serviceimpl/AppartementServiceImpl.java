@@ -28,16 +28,22 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 @Transactional
 public class AppartementServiceImpl implements AppartementService{
 	@Autowired
 	private AppartementRepository appRepo;
+	@Autowired
 	private AdresseRepository adrRepo;
+	@Autowired
 	private ImageAppartementRepository imgRepo;
+	@Autowired
 	private VideoAppartementRepository videoRepo;
+	@Autowired
 	private UtilisateurService utilService;
+	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired
 	private EntityManager em;
 	
 	@Override
@@ -80,6 +86,36 @@ public class AppartementServiceImpl implements AppartementService{
 	public Optional<Appartement> getAppartementByMaxId(Long id) {
 		
 		return Optional.empty();
+	}
+
+	@Override
+	public AppartementDto addAppartement(AppartementDto app) {
+		Optional<UtilisateurDto> util = utilService.getUtilisateur(app.getUsername());
+		Utilisateur utilisateur = modelMapper.map(util, Utilisateur.class);
+		
+		Adresse adr = adrRepo.save(app.getAdresse());
+		
+		Long adresse_id = adr.getIdAdresse();
+		Long utilisateur_id = utilisateur.getUtilisateurId();
+		String description = app.getDescription();
+		
+		int response = appRepo.saveAppartement( adresse_id, utilisateur_id, description);
+		if(response > 0)
+			return modelMapper.map(app, AppartementDto.class);
+		else
+			return null;
+	}
+
+	@Override
+	public AppartementDto getAppartementByUsername(String username) {
+		
+		return null;
+	}
+
+	@Override
+	public AppartementDto getAppartementByCommune(String commune) {
+		
+		return null;
 	}
 	
 	
