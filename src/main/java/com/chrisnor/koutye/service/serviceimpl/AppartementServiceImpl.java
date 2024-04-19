@@ -107,15 +107,28 @@ public class AppartementServiceImpl implements AppartementService{
 	}
 
 	@Override
-	public AppartementDto getAppartementByUsername(String username) {
-		
+	public List<Appartement> getAppartementByUsername(String username) {
+		Optional<UtilisateurDto> utilDto = utilService.getUtilisateur(username);
+		if(utilDto.isPresent() && !utilDto.get().getNomType().equals("Locataire"))
+		{
+			Utilisateur util = modelMapper.map(utilDto, Utilisateur.class);
+			List<Appartement> apps = appRepo.findByUtilisateur(util);
+			return apps;
+		}
 		return null;
 	}
 
 	@Override
-	public AppartementDto getAppartementByCommune(String commune) {
+	public List<Appartement> getAppartementByCommune(String commune) {
+		List<Adresse> adr = adrRepo.findByCommune(commune);
+		List<Appartement> apps = new ArrayList<>();
+		adr.forEach(a->{
+			Appartement app = appRepo.findByAdresse(a);
+			apps.add(app);
+			System.out.println(app.getAppartementId());
+		});
 		
-		return null;
+		return apps;
 	}
 	
 	

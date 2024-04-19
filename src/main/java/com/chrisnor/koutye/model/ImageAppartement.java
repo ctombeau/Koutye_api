@@ -6,6 +6,8 @@ import java.sql.Blob;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,6 +45,7 @@ public class ImageAppartement implements Serializable{
 	@Column(name="description_image")
 	private String descriptionImage;
 	
+	@JsonBackReference
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="appartement_id")
 	private Appartement appartement;

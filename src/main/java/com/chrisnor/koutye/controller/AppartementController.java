@@ -1,8 +1,11 @@
 package com.chrisnor.koutye.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,5 +50,25 @@ public class AppartementController {
 			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "aucune donnee trouvee");
 		}
 		
+	}
+	
+	@GetMapping("/appartement/show-by-username")
+	public ResponseEntity<?> showAppartementByUsername(@RequestParam String username)
+	{
+		List<Appartement> apps = appService.getAppartementByUsername(username);
+		if(apps != null)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,apps);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "aucune donnee trouvee");
+	}
+	
+	@GetMapping("/appartement/show-by-commune")
+	public ResponseEntity<?> showAppartementByCommune(@RequestParam String commune)
+	{
+		List<Appartement> apps = appService.getAppartementByCommune(commune);
+		if(apps != null)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,apps);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "aucune donnee trouvee");
 	}
 }
