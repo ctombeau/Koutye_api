@@ -71,4 +71,16 @@ public class AppartementController {
 		else
 			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "aucune donnee trouvee");
 	}
+	
+	@PostMapping("/appartement/add-image")
+	public ResponseEntity<?> addImageAppartement(@RequestParam Long idApp, @RequestParam MultipartFile image)
+	{
+		return null;
+	}
+	
+	@PostMapping("/appartement/add-video")
+	public ResponseEntity<?> addVideoAppartement(@RequestParam Long idApp, @RequestParam MultipartFile video)
+	{
+		return null;
+	}
 }

@@ -130,6 +130,18 @@ public class AppartementServiceImpl implements AppartementService{
 		
 		return apps;
 	}
+
+	@Override
+	public List<ImageAppartement> postImageAppartement(Long idApp, List<String> path) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<VideoAppartement> postVideoAppartement(Long idApp, List<String> path) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 

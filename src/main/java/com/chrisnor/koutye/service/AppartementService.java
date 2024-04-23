@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.chrisnor.koutye.dto.AppartementDto;
 import com.chrisnor.koutye.model.Appartement;
+import com.chrisnor.koutye.model.ImageAppartement;
+import com.chrisnor.koutye.model.VideoAppartement;
 
 
 public interface AppartementService {
@@ -15,4 +17,6 @@ public interface AppartementService {
 	public AppartementDto addAppartement(AppartementDto appDto);
 	public List<Appartement> getAppartementByUsername(String username);
 	public List<Appartement> getAppartementByCommune(String commune);
+	public List<ImageAppartement> postImageAppartement(Long idApp,List<String> paths);
+	public List<VideoAppartement> postVideoAppartement(Long idApp,List<String> paths);
 }
