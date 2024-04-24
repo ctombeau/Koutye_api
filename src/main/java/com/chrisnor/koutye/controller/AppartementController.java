@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chrisnor.koutye.dto.AppartementDto;
+import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Appartement;
 import com.chrisnor.koutye.repository.AppartementRepository;
 import com.chrisnor.koutye.response.Response;
@@ -73,13 +74,20 @@ public class AppartementController {
 	}
 	
 	@PostMapping("/appartement/add-image")
-	public ResponseEntity<?> addImageAppartement(@RequestParam Long idApp, @RequestParam MultipartFile image)
+	public ResponseEntity<?> addImageAppartement(@RequestParam Long idApp, @RequestParam List<MultipartFile> images)
 	{
+		String directory = "";
+		List<String> paths = new FileUpload().UploadAllFiles(images, directory);
+		
+		//images.forEach(img->System.out.println(img.getOriginalFilename()));
+		
+		// appel au service pour ajouter l'image de l'appartement
+		
 		return null;
 	}
 	
 	@PostMapping("/appartement/add-video")
-	public ResponseEntity<?> addVideoAppartement(@RequestParam Long idApp, @RequestParam MultipartFile video)
+	public ResponseEntity<?> addVideoAppartement(@RequestParam Long idApp, @RequestParam List<MultipartFile> videos)
 	{
 		return null;
 	}

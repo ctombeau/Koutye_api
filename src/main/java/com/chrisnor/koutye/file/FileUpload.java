@@ -77,6 +77,30 @@ public class FileUpload {
         
 	}
 	
+	public List<String> UploadAllFiles(List<MultipartFile> mfs, String directory)
+			throws FileNotFoundException {
+         List<String> filePaths=null;
+         
+         mfs.forEach(mf->{
+        	  try(InputStream inputStream = mf.getInputStream()){
+        		  if(!mf.getOriginalFilename().equals("")) {
+        			  Path filePath = Path.of(directory).toAbsolutePath().normalize();
+        			  Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        			  filePaths.add(filePath.toString());
+        		  }
+        		  else
+              		throw new FileNotFoundException();
+        	  }
+        	  catch (IOException ioe) {       
+                  //throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
+              	throw new FileNotFoundException();
+              }
+        	 
+         });
+         return filePaths;
+	}
+	
+	
 	public static InputStream DownloadFiles(String path) throws IOException
 	{ 
 		if(!path.equals(""))
