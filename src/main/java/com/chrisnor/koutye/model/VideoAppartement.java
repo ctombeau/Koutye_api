@@ -41,9 +41,6 @@ public class VideoAppartement implements Serializable {
 	@NotNull
 	private String video;
 	
-	@NotNull
-	@Column(name="description_video")
-	private String descriptionVideo;
 	
 	@JsonBackReference
 	@ManyToOne(cascade=CascadeType.ALL)

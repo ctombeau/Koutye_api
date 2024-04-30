@@ -132,9 +132,22 @@ public class AppartementServiceImpl implements AppartementService{
 	}
 
 	@Override
-	public List<ImageAppartement> postImageAppartement(Long idApp, List<String> path) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ImageAppartement> postImageAppartement(Long idApp, List<String> paths) {
+		List<ImageAppartement> imgApps = new ArrayList<>();
+		Optional<Appartement> app = appRepo.findById(idApp);
+		
+		if(app.isPresent())
+		{
+			paths.forEach(path->{
+				ImageAppartement imgApp = new ImageAppartement();
+				imgApp.setAppartement(app.get());
+				imgApp.setImage(path);
+				ImageAppartement imgAppSave = imgRepo.save(imgApp);
+				imgApps.add(imgAppSave);
+			});
+		}
+		
+		return imgApps;
 	}
 
 	@Override

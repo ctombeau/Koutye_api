@@ -41,10 +41,7 @@ public class ImageAppartement implements Serializable{
 	@NotNull
 	private String image; 
 	
-	@NotNull
-	@Column(name="description_image")
-	private String descriptionImage;
-	
+    
 	@JsonBackReference
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="appartement_id")

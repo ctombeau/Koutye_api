@@ -64,8 +64,8 @@ public class FileUpload {
         	if(!multipartFile.getOriginalFilename().equals(""))
         	{
               filePath= Path.of(directory+"-"+multipartFile.getOriginalFilename()).toAbsolutePath().normalize();
-              Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-              return filePath.toString();
+               Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+               return filePath.toString();
         	}
         	else
         		throw new FileNotFoundException();
@@ -79,13 +79,17 @@ public class FileUpload {
 	
 	public List<String> UploadAllFiles(List<MultipartFile> mfs, String directory)
 			throws FileNotFoundException {
-         List<String> filePaths=null;
+         List<String> filePaths= new ArrayList<>();
+         //mfs.forEach(x->System.out.println(x.getOriginalFilename()));
          
          mfs.forEach(mf->{
         	  try(InputStream inputStream = mf.getInputStream()){
         		  if(!mf.getOriginalFilename().equals("")) {
-        			  Path filePath = Path.of(directory).toAbsolutePath().normalize();
+        			  
+        			  Path filePath= Path.of(directory+"\\"+mf.getOriginalFilename()).toAbsolutePath().normalize();
+        			  //System.out.println(filePath);
         			  Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        			  System.out.println("On teste "+filePath.toString());
         			  filePaths.add(filePath.toString());
         		  }
         		  else
@@ -97,6 +101,7 @@ public class FileUpload {
               }
         	 
          });
+         
          return filePaths;
 	}
 	

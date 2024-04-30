@@ -76,7 +76,7 @@ public class AppartementController {
 	@PostMapping("/appartement/add-image")
 	public ResponseEntity<?> addImageAppartement(@RequestParam Long idApp, @RequestParam List<MultipartFile> images)
 	{
-		String directory = "";
+		String directory = "C:/Koutye_Folder/ImageApp";
 		List<String> paths = new FileUpload().UploadAllFiles(images, directory);
 		
 		//images.forEach(img->System.out.println(img.getOriginalFilename()));

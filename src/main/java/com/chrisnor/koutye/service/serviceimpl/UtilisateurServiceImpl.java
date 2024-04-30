@@ -382,7 +382,7 @@ public class UtilisateurServiceImpl implements UtilisateurService{
 			List<Long> ids = attachRepo.findIdCourtiersByIdProprietaire(utilDto.get().getUtilisateurId());
 			
 			List<Utilisateur> utils = utilisateurRepo.findAllById(ids);
-			System.out.println(ids);
+			
 			 utils.stream().forEach(util->{
 				 UtilisateurDto utilisateurDto = modelMapper.map(util, UtilisateurDto.class);
 				 maListeDto.add(utilisateurDto);
