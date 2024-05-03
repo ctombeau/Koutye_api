@@ -28,15 +28,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class VideoAppartement implements Serializable {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id_video")
 	private Long idVideo;
 	
-	//@Lob
+	
     @Basic(fetch = FetchType.LAZY)
 	@NotNull
 	private String video;

@@ -268,7 +268,7 @@ public class UtilisateurController {
 	public ResponseEntity<?> setProfilePicture(@RequestParam String username, @RequestParam MultipartFile photo) throws FileNotFoundException
 	{
 		String retour;
-		retour = new FileUpload().UploadFiles(photo, userFolder + username);
+		retour = new FileUpload().UploadFiles(photo, userFolder +"\\"+ username);
 		if (retour != null && !retour.equals(""))
 		{
 			retour = retour.replace("\\", "/");

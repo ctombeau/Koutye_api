@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.chrisnor.koutye.dto.AppartementDto;
 import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Appartement;
+import com.chrisnor.koutye.model.ImageAppartement;
+import com.chrisnor.koutye.model.VideoAppartement;
 import com.chrisnor.koutye.repository.AppartementRepository;
 import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
@@ -76,19 +78,33 @@ public class AppartementController {
 	@PostMapping("/appartement/add-image")
 	public ResponseEntity<?> addImageAppartement(@RequestParam Long idApp, @RequestParam List<MultipartFile> images)
 	{
-		String directory = "C:/Koutye_Folder/ImageApp";
+		String directory = "C:/Koutye_Folder/ImageApp/"+idApp;
+		System.out.println(directory);
 		List<String> paths = new FileUpload().UploadAllFiles(images, directory);
 		
-		//images.forEach(img->System.out.println(img.getOriginalFilename()));
+		// paths.forEach(p->p.replace("\\", "/"));
 		
-		// appel au service pour ajouter l'image de l'appartement
-		
-		return null;
+		List<ImageAppartement> imgSave = appService.postImageAppartement(idApp, paths);
+		if(imgSave != null)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,imgSave);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Path non insere");
+	
 	}
 	
 	@PostMapping("/appartement/add-video")
 	public ResponseEntity<?> addVideoAppartement(@RequestParam Long idApp, @RequestParam List<MultipartFile> videos)
 	{
-		return null;
+		String directory = "C:/Koutye_Folder/VideoApp/"+idApp;
+		System.out.println(directory);
+		List<String> paths = new FileUpload().UploadAllFiles(videos, directory);
+		
+		// paths.forEach(p->p.replace("\\", "/"));
+		
+		List<VideoAppartement> videoSave = appService.postVideoAppartement(idApp, paths);
+		if(videoSave != null)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,videoSave);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Path non insere");
 	}
 }

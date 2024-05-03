@@ -151,9 +151,22 @@ public class AppartementServiceImpl implements AppartementService{
 	}
 
 	@Override
-	public List<VideoAppartement> postVideoAppartement(Long idApp, List<String> path) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<VideoAppartement> postVideoAppartement(Long idApp, List<String> paths) {
+		List<VideoAppartement> videoApps = new ArrayList<>();
+		Optional<Appartement> app = appRepo.findById(idApp);
+		
+		if(app.isPresent())
+		{
+			paths.forEach(path->{
+				VideoAppartement videoApp = new VideoAppartement();
+				videoApp.setAppartement(app.get());
+				videoApp.setVideo(path);
+				VideoAppartement videoAppSave = videoRepo.save(videoApp);
+				videoApps.add(videoAppSave);
+			});
+		}
+		
+		return videoApps;
 	}
 	
 	

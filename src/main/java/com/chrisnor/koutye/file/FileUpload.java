@@ -63,8 +63,11 @@ public class FileUpload {
         try (InputStream inputStream = multipartFile.getInputStream()) {
         	if(!multipartFile.getOriginalFilename().equals(""))
         	{
-              filePath= Path.of(directory+"-"+multipartFile.getOriginalFilename()).toAbsolutePath().normalize();
-               Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+              filePath= Path.of(directory+"\\"+multipartFile.getOriginalFilename()).toAbsolutePath().normalize();
+              File file = new File(filePath.toString());
+			  boolean testDirectory= file.mkdirs();
+			  if (testDirectory)
+                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
                return filePath.toString();
         	}
         	else
@@ -87,10 +90,14 @@ public class FileUpload {
         		  if(!mf.getOriginalFilename().equals("")) {
         			  
         			  Path filePath= Path.of(directory+"\\"+mf.getOriginalFilename()).toAbsolutePath().normalize();
-        			  //System.out.println(filePath);
-        			  Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        			  System.out.println("On teste "+filePath.toString());
-        			  filePaths.add(filePath.toString());
+        			  File file = new File(filePath.toString());
+        			  boolean testDirectory= file.mkdirs();
+        			  
+        			  if(testDirectory) {
+        			    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        			 
+        			    filePaths.add(filePath.toString());
+        			  }
         		  }
         		  else
               		throw new FileNotFoundException();

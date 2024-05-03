@@ -28,15 +28,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class ImageAppartement implements Serializable{
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id_image")
 	private Long idImage;
 	
-	//@Lob
+	
     @Basic(fetch = FetchType.LAZY)
 	@NotNull
 	private String image; 
