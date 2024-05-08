@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.chrisnor.koutye.dto.AppartementDto;
 import com.chrisnor.koutye.dto.UtilisateurDto;
+import com.chrisnor.koutye.file.FileUpload;
 import com.chrisnor.koutye.model.Adresse;
 import com.chrisnor.koutye.model.Appartement;
 import com.chrisnor.koutye.model.Ferme;
@@ -167,6 +168,33 @@ public class AppartementServiceImpl implements AppartementService{
 		}
 		
 		return videoApps;
+	}
+
+	@Override
+	public boolean deleteImage(Long id) {
+		Optional<ImageAppartement> imgApp = imgRepo.findById(id);
+		if(imgApp.isPresent())
+		{
+			boolean b = new FileUpload().deleteFile(imgApp.get().getImage());
+			imgRepo.deleteImageById(id);
+			return true;
+		}
+		
+		return false;
+	
+	}
+
+	@Override
+	public boolean deleteVideo(Long id) {
+		Optional<VideoAppartement> videoApp = videoRepo.findById(id);
+		if(videoApp.isPresent())
+		{
+			boolean b = new FileUpload().deleteFile(videoApp.get().getVideo());
+			videoRepo.deleteVideoById(id);
+			return true;
+		}
+		
+		return false;
 	}
 	
 	

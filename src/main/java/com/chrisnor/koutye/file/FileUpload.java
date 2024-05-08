@@ -112,6 +112,11 @@ public class FileUpload {
          return filePaths;
 	}
 	
+	public boolean deleteFile(String path)
+	{
+		File file = new File(path);
+		return file.delete();
+	}
 	
 	public static InputStream DownloadFiles(String path) throws IOException
 	{ 

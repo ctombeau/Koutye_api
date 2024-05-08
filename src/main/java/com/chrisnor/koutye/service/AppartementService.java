@@ -19,4 +19,6 @@ public interface AppartementService {
 	public List<Appartement> getAppartementByCommune(String commune);
 	public List<ImageAppartement> postImageAppartement(Long idApp,List<String> paths);
 	public List<VideoAppartement> postVideoAppartement(Long idApp,List<String> paths);
+	public boolean deleteImage(Long id);
+	public boolean deleteVideo(Long id);
 }

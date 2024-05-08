@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import com.chrisnor.koutye.response.Response;
 import com.chrisnor.koutye.response.ResponseGenerator;
 import com.chrisnor.koutye.service.AppartementService;
 
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -106,5 +108,26 @@ public class AppartementController {
 			return responseGenerator.SuccessResponse(HttpStatus.OK,videoSave);
 		else
 			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Path non insere");
+	}
+	
+	@GetMapping("/appartement/delete-image/{id}")
+	public ResponseEntity<?> removeImage(@PathVariable Long id)
+	{	
+		boolean result = appService.deleteImage(id);
+		if(result)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,result);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Image non supprimee");
+		
+	}
+	
+	@GetMapping("/appartement/delete-video/{id}")
+	public ResponseEntity<?> removeVideo(@PathVariable Long id)
+	{
+		boolean result = appService.deleteVideo(id);
+		if(result)
+			return responseGenerator.SuccessResponse(HttpStatus.OK,result);
+		else
+			return responseGenerator.ErrorResponse(HttpStatus.NO_CONTENT, "Video non supprimee");
 	}
 }
