@@ -94,6 +94,7 @@ public class UtilisateurController {
 	@Autowired
 	private SpringTemplateEngine templateEngine;
 
+	
 	@PostMapping(value="/user/add")
 	public ResponseEntity<Response> AjouterUtilisateur(@RequestBody UtilisateurDto utilisateurDto)
 	 {
