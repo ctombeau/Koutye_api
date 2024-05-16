@@ -127,12 +127,12 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("http://localhost:5050/api/*");
+        //configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/*", configuration);
 
         return source;
         

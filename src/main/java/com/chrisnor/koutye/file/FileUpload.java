@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.chrisnor.koutye.exception.FileExcededSizeException;
 import com.chrisnor.koutye.exception.FileNotFoundException;
 
 
@@ -59,7 +60,8 @@ public class FileUpload {
 	public String UploadFiles(MultipartFile multipartFile, String directory)
 			throws FileNotFoundException {
          Path filePath=null;
-         
+         System.out.println("Size: "+ multipartFile.getSize());
+         System.out.println("Content: "+ multipartFile.getContentType());
         try (InputStream inputStream = multipartFile.getInputStream()) {
         	if(!multipartFile.getOriginalFilename().equals(""))
         	{
@@ -86,27 +88,31 @@ public class FileUpload {
          //mfs.forEach(x->System.out.println(x.getOriginalFilename()));
          
          mfs.forEach(mf->{
-        	  try(InputStream inputStream = mf.getInputStream()){
-        		  if(!mf.getOriginalFilename().equals("")) {
-        			  
-        			  Path filePath= Path.of(directory+"\\"+mf.getOriginalFilename()).toAbsolutePath().normalize();
-        			  File file = new File(filePath.toString());
-        			  boolean testDirectory= file.mkdirs();
-        			  
-        			  if(testDirectory) {
-        			    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        			 
-        			    filePaths.add(filePath.toString());
-        			  }
-        		  }
-        		  else
-              		throw new FileNotFoundException();
-        	  }
-        	  catch (IOException ioe) {       
-                  //throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
-              	throw new FileNotFoundException();
-              }
-        	 
+        	 if((mf.getContentType().contains("video") && mf.getSize()<= 2120000) || mf.getContentType().contains("image")) {
+        		 
+        		 try(InputStream inputStream = mf.getInputStream()){
+           		  if(!mf.getOriginalFilename().equals("")) {
+           			  
+           			  Path filePath= Path.of(directory+"\\"+mf.getOriginalFilename()).toAbsolutePath().normalize();
+           			  File file = new File(filePath.toString());
+           			  boolean testDirectory= file.mkdirs();
+           			  
+           			  if(testDirectory) {
+           			    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+           			 
+           			    filePaths.add(filePath.toString());
+           			  }
+           		  }
+           		  else
+                 		throw new FileNotFoundException();
+           	  }
+           	  catch (IOException ioe) {       
+                     //throw new IOException("Could not save file: " + multipartFile.getOriginalFilename(), ioe);
+                 	throw new FileNotFoundException();
+                 }
+        	 }
+        	 else 
+        		 throw new FileExcededSizeException();
          });
          
          return filePaths;
