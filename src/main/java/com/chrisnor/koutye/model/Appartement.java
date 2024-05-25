@@ -7,6 +7,7 @@ import java.util.List;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -41,24 +42,27 @@ public class Appartement implements Serializable {
 	@NotNull
 	private String description;
 	
-	@JsonBackReference
+	//@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name="utilisateur_id")
 	private Utilisateur utilisateur;
 	
-	@JsonBackReference
+	//@JsonBackReference
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="adresse_id")
 	private Adresse adresse;
 	
-	@OneToOne(mappedBy="appartement")
-	private Ferme ferme;
+	@JsonManagedReference
+	@OneToMany(mappedBy="appartement")
+	private List<Ferme> ferme;
 	
-	 @JsonManagedReference
+	@JsonManagedReference
+	//@JsonIgnore
 	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY,cascade = CascadeType.PERSIST)
 	private List<ImageAppartement> imageAppartements;
 	
 	@JsonManagedReference
+	//@JsonIgnore
 	@OneToMany(mappedBy="appartement", fetch=FetchType.LAZY,cascade = CascadeType.PERSIST)
 	private List<VideoAppartement> videoAppartements;
 }

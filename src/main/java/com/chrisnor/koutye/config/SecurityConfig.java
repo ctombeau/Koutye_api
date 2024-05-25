@@ -48,6 +48,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SecurityConfig{
 	
+//	@Autowired
+//	private JwtAuthConverter jwtAuthConverter;
 	
 	@Value("${jwt.secret}")
 	private String secretKey;
@@ -81,9 +83,10 @@ public class SecurityConfig{
 				
 				//ou
 				.oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
-				.cors(cors -> cors
-                        .configurationSource(corsConfigurationSource()))
-				.cors(cors -> cors.disable())
+//				.oauth2ResourceServer(oa->oa.jwt(jwt->jwt.jwtAuthenticationConverter(jwtAuthConverter)))
+//				.cors(cors -> cors
+//                        .configurationSource(corsConfigurationSource()))
+//				.cors(cors -> cors.disable())
 				.build();
 	}
 	
@@ -126,13 +129,14 @@ public class SecurityConfig{
 	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
         
-        configuration.addAllowedOrigin("http://localhost:5050/api/*");
-        //configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/*", configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
         

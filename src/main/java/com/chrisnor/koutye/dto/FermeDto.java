@@ -1,39 +1,30 @@
-package com.chrisnor.koutye.model;
+package com.chrisnor.koutye.dto;
 
-import java.awt.image.BufferedImage;
-import java.io.Serializable;
 import java.sql.Date;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.chrisnor.koutye.model.Appartement;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data 
-@NoArgsConstructor 
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class Ferme implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_ferme")
+@Builder
+public class FermeDto {
+	
 	private Long idFerme;
 	
 	@NotNull
@@ -47,9 +38,5 @@ public class Ferme implements Serializable{
 	@NotNull
 	private double montant;
 	
-	@JsonBackReference
-	@ManyToOne
-	@JoinColumn(name="appartement_id")
-	private Appartement appartement;
-	
+	private Long appartementId;
 }

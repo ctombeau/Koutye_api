@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@EnableMethodSecurity
 public class AppartementController {
 	
 	private AppartementService appService;
@@ -40,7 +42,7 @@ public class AppartementController {
 	
 	@PostMapping("/appartement/add")
 	@PreAuthorize("hasAuthority('SCOPE_Proprietaire')")
-	@ResponseBody
+	//@ResponseBody
 	public ResponseEntity<Response> AddAppartement(@RequestBody AppartementDto app)
 	{
 		

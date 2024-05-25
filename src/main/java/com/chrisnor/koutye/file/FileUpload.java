@@ -88,7 +88,7 @@ public class FileUpload {
          //mfs.forEach(x->System.out.println(x.getOriginalFilename()));
          
          mfs.forEach(mf->{
-        	 if((mf.getContentType().contains("video") && mf.getSize()<= 2120000) || mf.getContentType().contains("image")) {
+        	 if((mf.getContentType().contains("video") && mf.getSize()<= 10120000) || mf.getContentType().contains("image")) {
         		 
         		 try(InputStream inputStream = mf.getInputStream()){
            		  if(!mf.getOriginalFilename().equals("")) {

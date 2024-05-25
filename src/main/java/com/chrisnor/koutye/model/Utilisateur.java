@@ -44,10 +44,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Utilisateur implements Serializable{
 	
-  /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
   @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
   @Column(name="utilisateur_id")
@@ -105,13 +102,13 @@ public class Utilisateur implements Serializable{
   private LocalDateTime logoutDate;
   
   
-  @JsonIgnore
+  //@JsonIgnore
   @ManyToOne(cascade=CascadeType.ALL)
   @JoinColumn(name="id_type")
   private TypeUtilisateur typeUtilisateur;
   
   
-  @JsonIgnore
+  //@JsonIgnore
   @OneToMany (mappedBy="utilisateur", fetch=FetchType.LAZY, cascade = CascadeType.PERSIST)
   private List<Appartement> appartements;
   

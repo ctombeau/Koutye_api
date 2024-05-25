@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api")
 @EnableMethodSecurity(prePostEnabled=true)
